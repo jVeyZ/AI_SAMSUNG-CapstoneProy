@@ -1,0 +1,4 @@
+cropguard_model.keras
+cropguard_resnet50.pth
+data/
+_hlinktest/
