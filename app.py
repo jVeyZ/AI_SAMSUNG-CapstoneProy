@@ -2,28 +2,20 @@
 CropGuard - Streamlit Interactive Demo
 Tomato Disease Diagnosis for Smallholder Farmers
 """
-import os, sys
-os.environ["KERAS_BACKEND"] = "torch"
+import os, sys, json, subprocess, tempfile, traceback
 
 import streamlit as st
-import numpy as np
+st.set_page_config(page_title="CropGuard")
+
 from PIL import Image
-from keras.models import load_model
 from treatment_db import TREATMENTS
 
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(WORK_DIR, "cropguard_model.keras")
-RESNET_PATH = os.path.join(WORK_DIR, "cropguard_resnet50.pth")
-
-CLASS_NAMES = [
-    "Bacterial_spot", "Early_blight", "Healthy", "Late_blight",
-    "Leaf_Mold", "Septoria_leaf_spot", "Spider_mites",
-    "Target_Spot", "Mosaic_virus", "Yellow_Leaf_Curl_Virus"
-]
-
+PREDICT_WORKER = os.path.join(WORK_DIR, "predict_worker.py")
 display_names = [t["name"] for t in TREATMENTS.values()]
 
-st.set_page_config(page_title="CropGuard", layout="wide")
+
 st.title("CropGuard")
 st.markdown("### AI-Powered Tomato Disease Diagnosis for Smallholder Farmers")
 
@@ -34,7 +26,7 @@ with col1:
     uploaded = st.file_uploader("Choose a tomato leaf image", type=["jpg", "jpeg", "png"])
     if uploaded:
         img = Image.open(uploaded)
-        st.image(img, use_container_width=True, caption="Uploaded Image")
+        st.image(img, caption="Uploaded Image")
 
 with col2:
     st.subheader("Diagnosis")
@@ -44,40 +36,61 @@ with col2:
         st.markdown("**Supported Diseases:**")
         for t in TREATMENTS.values():
             st.markdown(f"- {t['name']}")
+    elif not os.path.exists(MODEL_PATH):
+        st.error("Model not found. Run train.py first.")
     else:
-        if not os.path.exists(MODEL_PATH):
-            st.error("Model not found. Run train.py first.")
-        else:
+        if st.button("Classify"):
             with st.spinner("Analyzing..."):
-                model = load_model(MODEL_PATH)
+                try:
+                    # Save uploaded image to a temp file for the worker
+                    suffix = os.path.splitext(uploaded.name)[1] or ".jpg"
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=WORK_DIR) as tmp:
+                        tmp.write(uploaded.getvalue())
+                        tmp_path = tmp.name
 
-                img_resized = img.resize((224, 224))
-                img_array = np.array(img_resized).astype(np.float32) / 255.0
+                    # Run prediction in a separate process (avoids Keras import issues in Streamlit thread)
+                    env = os.environ.copy()
+                    env["KERAS_BACKEND"] = "torch"
+                    proc = subprocess.run(
+                        [sys.executable, PREDICT_WORKER, tmp_path],
+                        capture_output=True,
+                        text=True,
+                        cwd=WORK_DIR,
+                        env=env,
+                        timeout=120,
+                    )
 
-                if img_array.ndim == 2:
-                    img_array = np.stack([img_array]*3, axis=-1)
+                    os.unlink(tmp_path)
 
-                img_batch = np.expand_dims(img_array, 0)
-                preds = model.predict(img_batch, verbose=0)
+                    if proc.returncode != 0:
+                        raise RuntimeError(f"Worker failed: {proc.stderr or proc.stdout}")
 
-                if preds.ndim == 1:
-                    pred_class = np.argmax(preds)
-                    conf = preds[pred_class]
-                else:
-                    pred_class = np.argmax(preds[0])
-                    conf = preds[0][pred_class]
+                    result = json.loads(proc.stdout)
+                    if not result.get("ok"):
+                        raise RuntimeError(result.get("error", "Unknown error"))
 
-                disease = TREATMENTS[pred_class]
+                except Exception as e:
+                    st.error(f"Prediction failed: {e}")
+                    with st.expander("Details"):
+                        st.code(traceback.format_exc())
+                    st.stop()
+
+            pred_class = result["pred_class"]
+            conf = result["conf"]
+            preds = result["preds"]
+            disease = TREATMENTS[pred_class]
 
             st.success(f"**{disease['name']}** ({conf:.1%} confidence)")
 
-            import matplotlib.pyplot as plt
             import matplotlib
             matplotlib.use("Agg")
+            import matplotlib.pyplot as plt
             fig, ax = plt.subplots(figsize=(6, 3))
-            colors = ['#4A90D9' if i == pred_class else '#E0E0E0' for i in range(len(display_names))]
-            ax.barh(display_names, preds[0], color=colors)
-            ax.set_xlabel('Confidence'); ax.set_xlim(0, 1)
+            colors = ['#4A90D9' if i == pred_class else '#E0E0E0'
+                      for i in range(len(display_names))]
+            ax.barh(display_names, preds, color=colors)
+            ax.set_xlabel('Confidence')
+            ax.set_xlim(0, 1)
             plt.tight_layout()
             st.pyplot(fig)
             st.markdown("---")

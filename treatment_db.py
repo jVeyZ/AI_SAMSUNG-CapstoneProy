@@ -35,32 +35,32 @@ TREATMENTS = {
         "prevention": "Use resistant varieties (e.g. Trust, Campari). Maintain relative humidity below 85%. Proper spacing and pruning. Avoid wetting foliage."
     },
     5: {
+        "name": "Mosaic Virus",
+        "crop": "Tomato",
+        "symptoms": "Mottled light/dark green mosaic pattern on leaves, distorted leaf shape, stunted growth, reduced fruit set and quality",
+        "treatment": "No chemical cure exists. Remove and destroy infected plants immediately. Control aphid populations (vectors). Do not touch healthy plants after handling infected ones.",
+        "prevention": "Use virus-resistant varieties (e.g. Celebrity, Mountain Merit). Control aphids and other insect vectors. Wash hands/tools after handling tobacco (ToMV). Remove weeds in nightshade family. Use certified virus-free seeds."
+    },
+    6: {
         "name": "Septoria Leaf Spot",
         "crop": "Tomato",
         "symptoms": "Small circular spots with gray centers and dark borders on lower leaves, tiny black fruiting bodies in spots, yellowing, leaf drop progressing upward",
         "treatment": "Apply chlorothalonil, mancozeb, or copper fungicides. Remove infected leaves. Mulch heavily to prevent soil splash. Stake plants to improve air circulation.",
         "prevention": "Crop rotation (3-4 years). Remove plant debris. Use drip irrigation instead of overhead. Apply organic mulch (straw, grass clippings)."
     },
-    6: {
+    7: {
         "name": "Spider Mites",
         "crop": "Tomato",
         "symptoms": "Fine stippling/yellow specks on leaves, fine webbing on underside, bronzing, leaf drop, stunted growth",
         "treatment": "Apply insecticidal soap or neem oil. Introduce predatory mites (Phytoseiulus persimilis). Use horticultural oil sprays. For severe infestations, use miticides (abamectin, bifenthrin).",
         "prevention": "Maintain humidity (mites thrive in dry conditions). Avoid broad-spectrum insecticides that kill natural enemies. Introduce ladybugs and predatory mites. Water-stress plants are more susceptible - maintain consistent irrigation."
     },
-    7: {
+    8: {
         "name": "Target Spot",
         "crop": "Tomato",
         "symptoms": "Dark brown concentric lesions with light centers on leaves, fruit rot with concentric rings, defoliation of older leaves",
         "treatment": "Apply chlorothalonil or mancozeb fungicides. Remove infected plant material. Improve air circulation. Avoid overhead watering.",
         "prevention": "Use disease-free seeds and transplants. Rotate crops. Maintain proper plant spacing. Apply preventive fungicides in humid conditions."
-    },
-    8: {
-        "name": "Mosaic Virus",
-        "crop": "Tomato",
-        "symptoms": "Mottled light/dark green mosaic pattern on leaves, distorted leaf shape, stunted growth, reduced fruit set and quality",
-        "treatment": "No chemical cure exists. Remove and destroy infected plants immediately. Control aphid populations (vectors). Do not touch healthy plants after handling infected ones.",
-        "prevention": "Use virus-resistant varieties (e.g. Celebrity, Mountain Merit). Control aphids and other insect vectors. Wash hands/tools after handling tobacco (ToMV). Remove weeds in nightshade family. Use certified virus-free seeds."
     },
     9: {
         "name": "Yellow Leaf Curl Virus",
