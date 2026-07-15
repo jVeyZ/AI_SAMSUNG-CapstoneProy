@@ -1,70 +1,57 @@
 {
-  "project": "CropGuard - Tomato Disease Diagnosis",
-  "dataset": "PlantVillage (10 tomato classes)",
-  "test_accuracy": 0.9325842696629213,
-  "best_model": "Transfer Learning (ResNet50)",
-  "class_names": [
-    "Bacterial_spot",
-    "Early_blight",
-    "Healthy",
-    "Late_blight",
-    "Leaf_Mold",
-    "Septoria_spot",
-    "Spider_mites",
-    "Target_Spot",
-    "Mosaic_virus",
-    "Yellow_Curl"
-  ],
-  "per_class": {
-    "Bacterial_spot": {
-      "precision": 0.9130434782608695,
-      "recall": 0.9746835443037974,
-      "f1": 0.9428571428571428
+  "project": "CropGuard - Multi-Crop Disease Diagnosis",
+  "models": {
+    "Tomato": {
+      "num_classes": 10,
+      "classes": [
+        "Bacterial Spot",
+        "Early Blight",
+        "Healthy",
+        "Late Blight",
+        "Leaf Mold",
+        "Septoria Leaf Spot",
+        "Spider Mites",
+        "Target Spot",
+        "Mosaic Virus",
+        "Yellow Leaf Curl Virus"
+      ],
+      "test_accuracy": 0.9344569288389513,
+      "train_samples": 12008,
+      "val_samples": 2401,
+      "test_samples": 1602
     },
-    "Early_blight": {
-      "precision": 0.9076923076923077,
-      "recall": 0.6483516483516484,
-      "f1": 0.7564102564102564
+    "Rice": {
+      "num_classes": 10,
+      "classes": [
+        "Bacterial Leaf Blight",
+        "Bacterial Leaf Streak",
+        "Bacterial Panicle Blight",
+        "Rice Blast",
+        "Brown Spot",
+        "Dead Heart",
+        "Downy Mildew",
+        "Rice Hispa",
+        "Healthy Rice",
+        "Tungro"
+      ],
+      "test_accuracy": 0.6733909702209414,
+      "train_samples": 7805,
+      "val_samples": 1561,
+      "test_samples": 1041
     },
-    "Healthy": {
-      "precision": 0.993421052631579,
-      "recall": 0.9556962025316456,
-      "f1": 0.9741935483870968
-    },
-    "Late_blight": {
-      "precision": 0.905940594059406,
-      "recall": 0.9384615384615385,
-      "f1": 0.9219143576826196
-    },
-    "Leaf_Mold": {
-      "precision": 0.9382716049382716,
-      "recall": 0.9047619047619048,
-      "f1": 0.9212121212121213
-    },
-    "Septoria_spot": {
-      "precision": 0.875,
-      "recall": 0.9655172413793104,
-      "f1": 0.9180327868852459
-    },
-    "Spider_mites": {
-      "precision": 0.9028571428571428,
-      "recall": 0.9186046511627907,
-      "f1": 0.9106628242074928
-    },
-    "Target_Spot": {
-      "precision": 0.9735099337748344,
-      "recall": 0.930379746835443,
-      "f1": 0.9514563106796117
-    },
-    "Mosaic_virus": {
-      "precision": 0.8734939759036144,
-      "recall": 0.9294871794871795,
-      "f1": 0.9006211180124224
-    },
-    "Yellow_Curl": {
-      "precision": 0.9723076923076923,
-      "recall": 0.9813664596273292,
-      "f1": 0.9768160741885626
+    "Orange": {
+      "num_classes": 5,
+      "classes": [
+        "Black Spot",
+        "Canker",
+        "Greening (HLB)",
+        "Healthy Orange",
+        "Scab"
+      ],
+      "test_accuracy": 0.9857142857142858,
+      "train_samples": 525,
+      "val_samples": 105,
+      "test_samples": 70
     }
   }
 }
