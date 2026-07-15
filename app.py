@@ -2,20 +2,74 @@
 CropGuard - Streamlit Interactive Demo
 Tomato Disease Diagnosis for Smallholder Farmers
 """
-import os, sys, json, subprocess, tempfile, traceback
+import os, sys, io
+os.environ["KERAS_BACKEND"] = "torch"
 
 import streamlit as st
-st.set_page_config(page_title="CropGuard")
-
+import numpy as np
+import torch
+import torchvision.models as models
+import torchvision.transforms as transforms
 from PIL import Image
+from keras.models import load_model
 from treatment_db import TREATMENTS
+from openai import OpenAI
+from gtts import gTTS
+
+
+def obtener_tratamiento_llm(enfermedad):
+    client = OpenAI(
+        base_url="https://api.groq.com/openai/v1",
+        api_key=st.secrets["GROQ_API_KEY"]
+    )
+    respuesta = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "Actúas como un ingeniero agrónomo experto en patologías del tomate en España. "
+                    "El usuario tiene una planta con {enfermedad}. "
+                    "Explícale de forma muy sencilla qué es y dale 3 soluciones ecológicas o remedios caseros prácticos "
+                    "para combatirlo. Sé empático y directo"
+                ).format(enfermedad=enfermedad),
+            },
+            {"role": "user", "content": f"Mi planta de tomate tiene: {enfermedad}"},
+        ],
+    )
+    return respuesta.choices[0].message.content
+
+
+def generar_audio_gtts(texto):
+    tts = gTTS(text=texto, lang="es")
+    buffer = io.BytesIO()
+    tts.write_to_fp(buffer)
+    buffer.seek(0)
+    return buffer
 
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(WORK_DIR, "cropguard_model.keras")
-PREDICT_WORKER = os.path.join(WORK_DIR, "predict_worker.py")
+RESNET_PATH = os.path.join(WORK_DIR, "cropguard_resnet50.pth")
+
+@st.cache_resource
+def load_resnet():
+    resnet = models.resnet50(weights=None)
+    resnet.load_state_dict(torch.load(RESNET_PATH, map_location="cpu", weights_only=True))
+    resnet.eval()
+    return resnet
+
+resnet_model = load_resnet()
+resnet_transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+
+CLASS_NAMES = [
+    "Bacterial_spot", "Early_blight", "Healthy", "Late_blight",
+    "Leaf_Mold", "Septoria_leaf_spot", "Spider_mites",
+    "Target_Spot", "Mosaic_virus", "Yellow_Leaf_Curl_Virus"
+]
+
 display_names = [t["name"] for t in TREATMENTS.values()]
 
-
+st.set_page_config(page_title="CropGuard", layout="wide")
 st.title("CropGuard")
 st.markdown("### AI-Powered Tomato Disease Diagnosis for Smallholder Farmers")
 
@@ -26,7 +80,7 @@ with col1:
     uploaded = st.file_uploader("Choose a tomato leaf image", type=["jpg", "jpeg", "png"])
     if uploaded:
         img = Image.open(uploaded)
-        st.image(img, caption="Uploaded Image")
+        st.image(img, use_container_width=True, caption="Uploaded Image")
 
 with col2:
     st.subheader("Diagnosis")
@@ -36,61 +90,39 @@ with col2:
         st.markdown("**Supported Diseases:**")
         for t in TREATMENTS.values():
             st.markdown(f"- {t['name']}")
-    elif not os.path.exists(MODEL_PATH):
-        st.error("Model not found. Run train.py first.")
     else:
-        if st.button("Classify"):
+        if not os.path.exists(MODEL_PATH):
+            st.error("Model not found. Run train.py first.")
+        else:
             with st.spinner("Analyzing..."):
-                try:
-                    # Save uploaded image to a temp file for the worker
-                    suffix = os.path.splitext(uploaded.name)[1] or ".jpg"
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=WORK_DIR) as tmp:
-                        tmp.write(uploaded.getvalue())
-                        tmp_path = tmp.name
+                model = load_model(MODEL_PATH)
 
-                    # Run prediction in a separate process (avoids Keras import issues in Streamlit thread)
-                    env = os.environ.copy()
-                    env["KERAS_BACKEND"] = "torch"
-                    proc = subprocess.run(
-                        [sys.executable, PREDICT_WORKER, tmp_path],
-                        capture_output=True,
-                        text=True,
-                        cwd=WORK_DIR,
-                        env=env,
-                        timeout=120,
-                    )
+                img_resized = img.resize((224, 224))
+                img_tensor = resnet_transform(img_resized.convert("RGB")).unsqueeze(0)
 
-                    os.unlink(tmp_path)
+                with torch.no_grad():
+                    features = resnet_model(img_tensor).numpy()
 
-                    if proc.returncode != 0:
-                        raise RuntimeError(f"Worker failed: {proc.stderr or proc.stdout}")
+                preds = model.predict(features, verbose=0)
 
-                    result = json.loads(proc.stdout)
-                    if not result.get("ok"):
-                        raise RuntimeError(result.get("error", "Unknown error"))
+                if preds.ndim == 1:
+                    pred_class = np.argmax(preds)
+                    conf = preds[pred_class]
+                else:
+                    pred_class = np.argmax(preds[0])
+                    conf = preds[0][pred_class]
 
-                except Exception as e:
-                    st.error(f"Prediction failed: {e}")
-                    with st.expander("Details"):
-                        st.code(traceback.format_exc())
-                    st.stop()
-
-            pred_class = result["pred_class"]
-            conf = result["conf"]
-            preds = result["preds"]
-            disease = TREATMENTS[pred_class]
+                disease = TREATMENTS[pred_class]
 
             st.success(f"**{disease['name']}** ({conf:.1%} confidence)")
 
+            import matplotlib.pyplot as plt
             import matplotlib
             matplotlib.use("Agg")
-            import matplotlib.pyplot as plt
             fig, ax = plt.subplots(figsize=(6, 3))
-            colors = ['#4A90D9' if i == pred_class else '#E0E0E0'
-                      for i in range(len(display_names))]
-            ax.barh(display_names, preds, color=colors)
-            ax.set_xlabel('Confidence')
-            ax.set_xlim(0, 1)
+            colors = ['#4A90D9' if i == pred_class else '#E0E0E0' for i in range(len(display_names))]
+            ax.barh(display_names, preds[0], color=colors)
+            ax.set_xlabel('Confidence'); ax.set_xlim(0, 1)
             plt.tight_layout()
             st.pyplot(fig)
             st.markdown("---")
@@ -101,6 +133,21 @@ with col2:
             st.write(disease["treatment"])
             st.markdown("#### Prevention")
             st.write(disease["prevention"])
+
+            st.markdown("---")
+            st.markdown("### Tratamiento personalizado con IA")
+
+            if st.button("Generar consejo con IA"):
+                with st.spinner("Consultando al agrónomo virtual..."):
+                    st.session_state["tratamiento_llm"] = obtener_tratamiento_llm(disease["name"])
+
+            if "tratamiento_llm" in st.session_state:
+                st.info(st.session_state["tratamiento_llm"])
+
+                if st.button("🔊 Escuchar Diagnóstico"):
+                    with st.spinner("Generando audio del diagnóstico..."):
+                        audio_buffer = generar_audio_gtts(st.session_state["tratamiento_llm"])
+                    st.audio(audio_buffer, format="audio/mp3", start_time=0)
 
 st.markdown("---")
 st.caption("CropGuard - Samsung Innovation Campus Capstone Project")
