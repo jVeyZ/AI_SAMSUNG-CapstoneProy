@@ -1,0 +1,8 @@
+Datasets utilizados:
+--Tomato--
+
+--Orange--
+https://data.mendeley.com/datasets/6szsnpypdd/1
+
+--Rice--
+https://www.kaggle.com/datasets/yashzanwar/rice-leaf-disease-classification/data?select=train_images
