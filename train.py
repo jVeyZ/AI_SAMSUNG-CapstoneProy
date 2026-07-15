@@ -128,7 +128,7 @@ for crop_name, crop_info in CROP_DATA.items():
     print(f"\n  {crop_name} Test Accuracy: {test_acc:.2%}")
     print(classification_report(yte_raw, yp, target_names=crop_info["classes"]))
 
-    model_path = os.path.join(WORK_DIR, f"cropguard_{crop_name.lower()}_classifier.keras")
+    model_path = os.path.join(WORK_DIR, "models", f"cropguard_{crop_name.lower()}_classifier.keras")
     m.save(model_path)
     print(f"  Saved: cropguard_{crop_name.lower()}_classifier.keras")
 
@@ -139,7 +139,7 @@ for crop_name, crop_info in CROP_DATA.items():
     ax.set_title(f'Confusion Matrix - {crop_name}')
     ax.set_xlabel('Predicted'); ax.set_ylabel('True')
     plt.xticks(rotation=45, ha='right'); plt.tight_layout()
-    plt.savefig(os.path.join(WORK_DIR, f"confusion_matrix_{crop_name.lower()}.png"), dpi=100, bbox_inches='tight')
+    plt.savefig(os.path.join(WORK_DIR, "results", "figures", f"confusion_matrix_{crop_name.lower()}.png"), dpi=100, bbox_inches='tight')
     plt.close()
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
@@ -148,7 +148,7 @@ for crop_name, crop_info in CROP_DATA.items():
     ax2.plot(h.history['loss'], 'b', label='train'); ax2.plot(h.history['val_loss'], 'r', label='val')
     ax2.set_title(f'{crop_name} - Loss'); ax2.legend()
     plt.tight_layout()
-    plt.savefig(os.path.join(WORK_DIR, f"history_{crop_name.lower()}.png"), dpi=100)
+    plt.savefig(os.path.join(WORK_DIR, "results", "figures", f"history_{crop_name.lower()}.png"), dpi=100)
     plt.close()
 
     results[crop_name] = {
@@ -160,14 +160,14 @@ for crop_name, crop_info in CROP_DATA.items():
         "test_samples": n_test,
     }
 
-torch.save(resnet.state_dict(), os.path.join(WORK_DIR, "cropguard_resnet50.pth"))
+torch.save(resnet.state_dict(), os.path.join(WORK_DIR, "models", "cropguard_resnet50.pth"))
 print(f"\nSaved: cropguard_resnet50.pth")
 
 results_data = {
     "project": "CropGuard - Multi-Crop Disease Diagnosis",
     "models": results,
 }
-with open(os.path.join(WORK_DIR, "training_results.json"), "w") as f:
+with open(os.path.join(WORK_DIR, "results", "training_results.json"), "w") as f:
     json.dump(results_data, f, indent=2)
 print("Saved: training_results.json")
 

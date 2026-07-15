@@ -4,8 +4,8 @@ os.environ["KERAS_BACKEND"] = "torch"
 image_path = sys.argv[1]
 
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(WORK_DIR, "cropguard_model.keras")
-RESNET_PATH = os.path.join(WORK_DIR, "cropguard_resnet50.pth")
+MODEL_PATH = os.path.join(WORK_DIR, "models", "cropguard_model.keras")
+RESNET_PATH = os.path.join(WORK_DIR, "models", "cropguard_resnet50.pth")
 
 from treatment_db import TREATMENTS
 

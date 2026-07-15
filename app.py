@@ -58,7 +58,7 @@ WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @st.cache_resource
 def load_resnet():
-    resnet_path = os.path.join(WORK_DIR, "cropguard_resnet50.pth")
+    resnet_path = os.path.join(WORK_DIR, "models", "cropguard_resnet50.pth")
     resnet = models.resnet50(weights=None)
     resnet.load_state_dict(torch.load(resnet_path, map_location="cpu", weights_only=True))
     resnet.eval()
@@ -98,7 +98,7 @@ with col2:
         treatment_offset = crop_info["treatment_start"]
         class_names = crop_info["classes"]
 
-        model_path = os.path.join(WORK_DIR, f"cropguard_{crop.lower()}_classifier.keras")
+        model_path = os.path.join(WORK_DIR, "models", f"cropguard_{crop.lower()}_classifier.keras")
 
         if not os.path.exists(model_path):
             st.error(f"Model for {crop} not found. Run train.py first.")

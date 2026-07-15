@@ -1,5 +1,5 @@
-cropguard_model.keras
-cropguard_resnet50.pth
+models/
+results/
 data/
 _hlinktest/
 __pycache__/

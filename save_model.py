@@ -44,8 +44,8 @@ yp = np.argmax(m.predict(Xte, verbose=0), axis=1)
 acc = np.mean(yp == yte)
 print(f"Test accuracy: {acc:.2%}")
 
-m.save(os.path.join(WORK_DIR, "cropguard_model.keras"))
-torch.save(resnet.state_dict(), os.path.join(WORK_DIR, "cropguard_resnet50.pth"))
+m.save(os.path.join(WORK_DIR, "models", "cropguard_model.keras"))
+torch.save(resnet.state_dict(), os.path.join(WORK_DIR, "models", "cropguard_resnet50.pth"))
 
 cr = classification_report(yte, yp, target_names=CLASS_NAMES, output_dict=True)
 results = {
@@ -56,7 +56,7 @@ results = {
     "class_names": CLASS_NAMES,
     "per_class": {c: {"precision": cr[c]["precision"], "recall": cr[c]["recall"], "f1": cr[c]["f1-score"]} for c in CLASS_NAMES}
 }
-with open(os.path.join(WORK_DIR, "training_results.json"), "w") as f:
+with open(os.path.join(WORK_DIR, "results", "training_results.json"), "w") as f:
     json.dump(results, f, indent=2)
 
 img_path = os.path.join(DATA_DIR, CLASS_NAMES[0], os.listdir(os.path.join(DATA_DIR, CLASS_NAMES[0]))[0])
@@ -71,6 +71,6 @@ ax1.imshow(img); ax1.set_title(f"{CLASS_NAMES[pred]}"); ax1.axis("off")
 hm = np.ones((224, 224)); hm[50:170, 50:170] = 0.7
 ax2.imshow(img); ax2.imshow(np.array(plt.cm.jet(plt.Normalize()(hm)))[:, :, :3], alpha=0.4)
 ax2.set_title("Grad-CAM"); ax2.axis("off")
-plt.tight_layout(); plt.savefig(os.path.join(WORK_DIR, "gradcam_example.png"), dpi=100); plt.close()
+plt.tight_layout(); plt.savefig(os.path.join(WORK_DIR, "results", "figures", "gradcam_example.png"), dpi=100); plt.close()
 
 print("All files saved!")
