@@ -3,16 +3,13 @@ CropGuard - Streamlit Interactive Demo
 Multi-Crop Disease Diagnosis (Tomato, Rice, Orange)
 """
 import os, sys, io
-os.environ["KERAS_BACKEND"] = "torch"
 
 import streamlit as st
 import numpy as np
 import torch
-import torchvision.models as models
-import torchvision.transforms as transforms
 from PIL import Image
-from keras.models import load_model
-from crop_config import CROP_CLASSES, CROP_DATA_DIRS, get_disease_name, get_num_classes
+from crop_config import CROP_CLASSES, get_disease_name, get_num_classes
+from model_def import build_model, model_path, EVAL_TRANSFORM
 
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -68,15 +65,11 @@ def generar_audio_gtts(texto):
 
 # ---- Model loading -------------------------------------------------------
 @st.cache_resource
-def load_resnet():
-    resnet_path = os.path.join(WORK_DIR, "models", "cropguard_resnet50.pth")
-    resnet = models.resnet50(weights=None)
-    resnet.load_state_dict(torch.load(resnet_path, map_location="cpu", weights_only=True))
-    resnet.eval()
-    return resnet
-
-resnet_model = load_resnet()
-resnet_transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+def load_crop_model(crop_name):
+    model = build_model(get_num_classes(crop_name), weights=None)
+    model.load_state_dict(torch.load(model_path(crop_name), map_location="cpu", weights_only=True))
+    model.eval()
+    return model
 
 
 # ---- Streamlit UI --------------------------------------------------------
@@ -107,23 +100,19 @@ with col2:
         num_classes = get_num_classes(crop)
         class_names = CROP_CLASSES[crop]
 
-        model_path = os.path.join(WORK_DIR, "models", f"cropguard_{crop.lower()}_classifier.keras")
-
-        if not os.path.exists(model_path):
-            st.error(f"Model for **{crop}** not found ({model_path}).")
+        if not os.path.exists(model_path(crop)):
+            st.error(f"Model for **{crop}** not found ({model_path(crop)}).")
             st.info("Run `python train.py` to train classifiers.")
         else:
             with st.spinner(f"Analyzing {crop} leaf..."):
-                model = load_model(model_path)
+                model = load_crop_model(crop)
 
-                img_resized = img.resize((224, 224))
-                img_tensor = resnet_transform(img_resized.convert("RGB")).unsqueeze(0)
+                img_tensor = EVAL_TRANSFORM(img.convert("RGB")).unsqueeze(0)
 
                 with torch.no_grad():
-                    features = resnet_model(img_tensor).numpy()
+                    logits = model(img_tensor)
+                    preds_1d = torch.softmax(logits, dim=1)[0].numpy()
 
-                preds = model.predict(features, verbose=0)
-                preds_1d = preds[0] if preds.ndim > 1 else preds
                 pred_class = int(preds_1d.argmax())
                 conf = float(preds_1d[pred_class])
 
