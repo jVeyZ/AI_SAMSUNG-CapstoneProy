@@ -53,7 +53,11 @@ android\gradlew.bat -p android testDebugUnitTest assembleDebug   # Android tests
 - Verified working env: torch 2.6.0+cu124, streamlit 1.59.2, Windows, RTX 3050 8GB. `train.py` trains on GPU; `app.py`/`server.py`/`predict_worker.py` inference is CPU-only.
 - Keras/TensorFlow are NOT needed (removed when the pipeline went pure-torch). The old `KERAS_BACKEND=torch` requirement is gone.
 - AI follow-up answers need env var `GEMINI_API_KEY` (free key from aistudio.google.com). Without it, `llm_advice.ask_followup()` returns the static treatment as fallback — tests rely on this.
-- Android builds need **JDK 17** — the system `java` on this machine is 1.8 and will NOT work. Use Android Studio's bundled JBR: set `JAVA_HOME=C:\Program Files\Android\Android Studio\jbr` and `ANDROID_HOME=%LOCALAPPDATA%\Android\Sdk` before running gradlew.
+- Android builds need **JDK 17+** — the system `java` on this machine is 1.8 and will NOT work. Use Android Studio's bundled JBR (JDK 21). These are already set as persistent User env vars on this machine:
+  ```powershell
+  [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Android\Android Studio\jbr", "User")
+  [Environment]::SetEnvironmentVariable("ANDROID_HOME", "$env:LOCALAPPDATA\Android\Sdk", "User")
+  ```
 - Android demo networking: emulator reaches the host via `http://10.0.2.2:8000` (default in `BuildConfig.BASE_URL`); a physical phone on the same Wi-Fi needs the PC's LAN IP there instead.
 
 ## app.py / Streamlit gotchas

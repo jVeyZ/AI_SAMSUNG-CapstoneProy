@@ -98,15 +98,15 @@ CropGuard/
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Model | ResNet50 (torchvision), fine-tuned per crop |
-| Training | PyTorch, scikit-learn, matplotlib |
-| Web demo | Streamlit |
-| Backend API | FastAPI + uvicorn |
-| Android | Kotlin, Jetpack Compose, Material 3, Retrofit |
-| AI chat | Google Gemini 2.0 Flash (free tier) |
-| CI/CD | GitHub Actions (Python + Android jobs) |
+| Layer       | Technology                                    |
+| ----------- | --------------------------------------------- |
+| Model       | ResNet50 (torchvision), fine-tuned per crop   |
+| Training    | PyTorch, scikit-learn, matplotlib             |
+| Web demo    | Streamlit                                     |
+| Backend API | FastAPI + uvicorn                             |
+| Android     | Kotlin, Jetpack Compose, Material 3, Retrofit |
+| AI chat     | Google Gemini 2.0 Flash (free tier)           |
+| CI/CD       | GitHub Actions (Python + Android jobs)        |
 
 ## Android App
 
@@ -123,11 +123,12 @@ android\gradlew.bat -p android assembleDebug
 android\gradlew.bat -p android testDebugUnitTest
 ```
 
-Requires JDK 17. Use Android Studio's bundled JBR:
+Requires JDK 17+. These should already be set as persistent env vars. If not:
 
-```bash
-set JAVA_HOME=C:\Program Files\Android\Android Studio\jbr
-set ANDROID_HOME=%LOCALAPPDATA%\Android\Sdk
+```powershell
+# PowerShell (persistent)
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Android\Android Studio\jbr", "User")
+[Environment]::SetEnvironmentVariable("ANDROID_HOME", "$env:LOCALAPPDATA\Android\Sdk", "User")
 ```
 
 ## Testing
