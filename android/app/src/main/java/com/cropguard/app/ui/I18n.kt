@@ -13,6 +13,18 @@ object L {
     fun t(key: String, lang: String): String =
         STRINGS[lang]?.get(key) ?: STRINGS["en"]!!.getValue(key)
 
+    fun t(key: String, lang: String, crop: String): String {
+        val cropKey = "${key}_${crop.lowercase()}"
+        return STRINGS[lang]?.get(cropKey) ?: STRINGS["en"]?.get(cropKey)
+            ?: t(key, lang)
+    }
+
+    fun cropName(crop: String, lang: String): String =
+        STRINGS[lang]?.get("crop_${crop.lowercase()}") ?: crop
+
+    /** Orange dataset uses fruit images; others use leaf. */
+    fun cropPart(crop: String): String = if (crop.equals("Orange", ignoreCase = true)) "fruit" else "leaf"
+
     fun disease(crop: String, disease: String, lang: String): String {
         val slug = disease.lowercase()
             .replace(" ", "_")
@@ -26,7 +38,8 @@ object L {
         "select_crop" to "Select crop",
         "take_photo" to "Camera",
         "choose_gallery" to "Gallery",
-        "analyze" to "Analyze leaf",
+        "analyze_leaf" to "Analyze leaf",
+        "analyze_fruit" to "Analyze fruit",
         "analyzing" to "Analyzing…",
         "diagnosis_result" to "Diagnosis",
         "confidence" to "confidence",
@@ -38,18 +51,23 @@ object L {
         "ask_ai" to "Send",
         "ai_unavailable" to "AI unavailable — showing stored recommendations.",
         "error_network" to "Network error — is the backend server running?",
-        "pick_image_first" to "Pick a leaf photo first",
+        "pick_image_leaf" to "Pick a leaf photo first",
+        "pick_image_fruit" to "Pick a fruit photo first",
         "language" to "Language",
         "no_treatment" to "No stored recommendations for this disease.",
         "you" to "You",
         "agronomist_ai" to "Agronomist AI",
+        "crop_tomato" to "Tomato",
+        "crop_rice" to "Rice",
+        "crop_orange" to "Orange",
     )
 
     private val UI_ES = mapOf(
         "select_crop" to "Selecciona cultivo",
         "take_photo" to "Cámara",
         "choose_gallery" to "Galería",
-        "analyze" to "Analizar hoja",
+        "analyze_leaf" to "Analizar hoja",
+        "analyze_fruit" to "Analizar fruta",
         "analyzing" to "Analizando…",
         "diagnosis_result" to "Diagnóstico",
         "confidence" to "de confianza",
@@ -61,18 +79,23 @@ object L {
         "ask_ai" to "Enviar",
         "ai_unavailable" to "IA no disponible — mostrando recomendaciones guardadas.",
         "error_network" to "Error de red — ¿está el servidor en marcha?",
-        "pick_image_first" to "Elige primero una foto de la hoja",
+        "pick_image_leaf" to "Elige primero una foto de la hoja",
+        "pick_image_fruit" to "Elige primero una foto de la fruta",
         "language" to "Idioma",
         "no_treatment" to "No hay recomendaciones guardadas para esta enfermedad.",
         "you" to "Tú",
         "agronomist_ai" to "IA agrónoma",
+        "crop_tomato" to "Tomate",
+        "crop_rice" to "Arroz",
+        "crop_orange" to "Naranja",
     )
 
     private val UI_VA = mapOf(
         "select_crop" to "Selecciona cultiu",
         "take_photo" to "Càmera",
         "choose_gallery" to "Galeria",
-        "analyze" to "Analitza fulla",
+        "analyze_leaf" to "Analitza fulla",
+        "analyze_fruit" to "Analitza fruita",
         "analyzing" to "Analitzant…",
         "diagnosis_result" to "Diagnòstic",
         "confidence" to "de confiança",
@@ -84,11 +107,15 @@ object L {
         "ask_ai" to "Envia",
         "ai_unavailable" to "IA no disponible — mostrant recomanacions guardades.",
         "error_network" to "Error de xarxa — el servidor està en marxa?",
-        "pick_image_first" to "Tria primer una foto de la fulla",
+        "pick_image_leaf" to "Tria primer una foto de la fulla",
+        "pick_image_fruit" to "Tria primer una foto de la fruita",
         "language" to "Idioma",
         "no_treatment" to "No hi ha recomanacions guardades per a esta malaltia.",
         "you" to "Tu",
         "agronomist_ai" to "IA agrònoma",
+        "crop_tomato" to "Tomàtiga",
+        "crop_rice" to "Arròs",
+        "crop_orange" to "Taronja",
     )
 
     private val DISEASES_EN = mapOf(

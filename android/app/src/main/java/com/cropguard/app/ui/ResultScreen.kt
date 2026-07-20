@@ -85,7 +85,7 @@ fun ResultScreen(vm: CropViewModel, onBack: () -> Unit) {
                             style = MaterialTheme.typography.headlineMedium,
                         )
                         Text(
-                            pred.crop,
+                            L.cropName(pred.crop, state.lang),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.outline,
                         )
@@ -184,7 +184,7 @@ private fun PreviewResultScreen() {
                     Card(shape = RoundedCornerShape(24.dp), modifier = Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Text("Early Blight", style = MaterialTheme.typography.headlineMedium)
-                            Text("Tomato", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.outline)
+                            Text(L.cropName("Tomato", "en"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.outline)
                             LinearProgressIndicator(progress = { 0.93f }, modifier = Modifier.fillMaxWidth().height(8.dp), strokeCap = ProgressIndicatorDefaults.LinearStrokeCap)
                             Text("93% Confidence", style = MaterialTheme.typography.labelLarge)
                         }

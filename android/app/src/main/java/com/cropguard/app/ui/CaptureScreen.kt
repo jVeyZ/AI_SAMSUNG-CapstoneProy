@@ -91,7 +91,7 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit) {
                     FilterChip(
                         selected = state.selectedCrop == crop,
                         onClick = { vm.selectCrop(crop) },
-                        label = { Text(crop) },
+                        label = { Text(L.cropName(crop, state.lang)) },
                     )
                 }
             }
@@ -119,7 +119,7 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit) {
                                 tint = MaterialTheme.colorScheme.outline,
                             )
                             Text(
-                                L.t("pick_image_first", state.lang),
+                                L.t("pick_image", state.lang, state.selectedCrop),
                                 color = MaterialTheme.colorScheme.outline,
                             )
                         }
@@ -173,7 +173,7 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit) {
                 } else {
                     Icon(Icons.Default.Search, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text(L.t("analyze", state.lang))
+                    Text(L.t("analyze", state.lang, state.selectedCrop))
                 }
             }
         }
@@ -203,7 +203,7 @@ private fun PreviewCaptureScreen() {
                         FilterChip(
                             selected = crop == "Tomato",
                             onClick = {},
-                            label = { Text(crop) },
+                            label = { Text(L.cropName(crop, "en")) },
                         )
                     }
                 }
