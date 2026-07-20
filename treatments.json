@@ -1,0 +1,508 @@
+{
+  "Tomato": {
+    "Bacterial Spot": {
+      "en": {
+        "explanation": "Bacterial spot is caused by Xanthomonas bacteria. It produces small, dark, water-soaked spots on leaves and fruit that can merge and cause defoliation.",
+        "symptoms": ["Small dark brown to black spots on leaves, often with a yellow halo", "Raised, scabby spots on green fruit", "Leaves turning yellow and dropping in severe cases"],
+        "treatment": ["Apply a copper-based bactericide every 7-10 days", "Remove and destroy the most affected leaves (do not compost them)", "Water at the base of the plant, never wetting the leaves"],
+        "prevention": ["Use certified disease-free seeds and rotate crops every 2-3 years", "Space plants well for airflow and avoid working with wet plants"]
+      },
+      "es": {
+        "explanation": "La mancha bacteriana es causada por la bacteria Xanthomonas. Produce manchas pequeñas, oscuras y acuosas en hojas y frutos que pueden unirse y causar defoliación.",
+        "symptoms": ["Manchas pequeñas de color marrón oscuro a negro en las hojas, a menudo con halo amarillo", "Manchas elevadas y rugosas en los frutos verdes", "Hojas que amarillean y caen en casos graves"],
+        "treatment": ["Aplicar un bactericida a base de cobre cada 7-10 días", "Retirar y destruir las hojas más afectadas (no compostarlas)", "Regar en la base de la planta, sin mojar las hojas"],
+        "prevention": ["Usar semillas certificadas libres de enfermedad y rotar cultivos cada 2-3 años", "Espaciar bien las plantas para ventilar y evitar trabajar con plantas mojadas"]
+      },
+      "va": {
+        "explanation": "La tacatera bacteriana la causa el bacteri Xanthomonas. Produïx taques menudes, fosques i aquoses en fulles i fruits que poden unir-se i causar defoliació.",
+        "symptoms": ["Taques menudes de color marró fosc a negre en les fulles, sovint amb halo groc", "Taques elevades i rugoses en els fruits verds", "Fulles que groguegen i cauen en casos greus"],
+        "treatment": ["Aplicar un bactericida a base de coure cada 7-10 dies", "Retirar i destruir les fulles més afectades (no compostar-les)", "Regar a la base de la planta, sense mullar les fulles"],
+        "prevention": ["Usar llavors certificades lliures de malaltia i rotar cultius cada 2-3 anys", "Espaiar bé les plantes per a ventilar i evitar treballar amb plantes mollades"]
+      }
+    },
+    "Early Blight": {
+      "en": {
+        "explanation": "Early blight is a fungal disease (Alternaria solani) that attacks older leaves first, creating characteristic concentric ring 'target spots'.",
+        "symptoms": ["Brown spots with concentric rings like a target on lower, older leaves", "Yellow tissue around the spots", "Leaves drying and falling from the bottom up"],
+        "treatment": ["Remove and destroy affected lower leaves", "Apply a copper or sulfur-based fungicide", "Mulch around the base to prevent soil spores splashing onto leaves"],
+        "prevention": ["Rotate crops and avoid planting tomatoes in the same spot yearly", "Water at the base in the morning so leaves dry quickly"]
+      },
+      "es": {
+        "explanation": "El tizón temprano es una enfermedad fúngica (Alternaria solani) que ataca primero las hojas viejas, creando características 'manchas diana' de anillos concéntricos.",
+        "symptoms": ["Manchas marrones con anillos concéntricos como una diana en las hojas bajas y viejas", "Tejido amarillo alrededor de las manchas", "Hojas que se secan y caen de abajo hacia arriba"],
+        "treatment": ["Retirar y destruir las hojas bajas afectadas", "Aplicar un fungicida a base de cobre o azufre", "Cubrir el suelo con acolchado para evitar que las esporas salpiquen las hojas"],
+        "prevention": ["Rotar cultivos y evitar plantar tomates en el mismo lugar cada año", "Regar en la base por la mañana para que las hojas se sequen rápido"]
+      },
+      "va": {
+        "explanation": "La peste primerenca és una malaltia fúngica (Alternaria solani) que ataca primer les fulles velles, creant característiques 'taques diana' d'anells concèntrics.",
+        "symptoms": ["Taques marrons amb anells concèntrics com una diana en les fulles baixes i velles", "Teixit groc al voltant de les taques", "Fulles que s'eixequen i cauen de baix cap a dalt"],
+        "treatment": ["Retirar i destruir les fulles baixes afectades", "Aplicar un fungicida a base de coure o sofre", "Cobrix el sòl amb encoixinat per a evitar que les espores esquitxen les fulles"],
+        "prevention": ["Rotar cultius i evitar plantar tomàquets en el mateix lloc cada any", "Regar a la base pel matí perquè les fulles s'eixuguen ràpid"]
+      }
+    },
+    "Healthy": {
+      "en": {
+        "explanation": "Great news — your tomato plant looks healthy! No signs of disease were detected. Keep up the good care to maintain it.",
+        "symptoms": ["No disease symptoms detected", "Leaves show a uniform green color", "Normal growth and structure"],
+        "treatment": ["No treatment needed — keep watering regularly at the base", "Maintain balanced fertilization (avoid excess nitrogen)", "Inspect leaves weekly to catch any problem early"],
+        "prevention": ["Rotate crops each season and keep good spacing between plants", "Remove weeds and old plant debris from around the crop"]
+      },
+      "es": {
+        "explanation": "Buenas noticias — ¡tu planta de tomate parece sana! No se detectaron signos de enfermedad. Mantén los buenos cuidados.",
+        "symptoms": ["No se detectaron síntomas de enfermedad", "Las hojas muestran un color verde uniforme", "Crecimiento y estructura normales"],
+        "treatment": ["No necesita tratamiento — sigue regando regularmente en la base", "Mantén una fertilización equilibrada (evita el exceso de nitrógeno)", "Inspecciona las hojas semanalmente para detectar problemas a tiempo"],
+        "prevention": ["Rota cultivos cada temporada y mantén buena separación entre plantas", "Elimina malas hierbas y restos de plantas alrededor del cultivo"]
+      },
+      "va": {
+        "explanation": "Bones notícies — la teua planta de tomàquet sembla sana! No s'han detectat signes de malaltia. Manté les bones cures.",
+        "symptoms": ["No s'han detectat símptomes de malaltia", "Les fulles mostren un color verd uniforme", "Creixement i estructura normals"],
+        "treatment": ["No necessita tractament — continua regant regularment a la base", "Manté una fertilització equilibrada (evita l'excés de nitrogen)", "Inspecciona les fulles setmanalment per a detectar problemes a temps"],
+        "prevention": ["Rota cultius cada temporada i manté bona separació entre plantes", "Elimina males herbes i restes de plantes al voltant del cultiu"]
+      }
+    },
+    "Late Blight": {
+      "en": {
+        "explanation": "Late blight is a fast-spreading disease caused by the oomycete Phytophthora infestans (the same that caused the Irish potato famine). It can destroy a crop in days under humid conditions.",
+        "symptoms": ["Large, irregular, water-soaked brown patches on leaves", "White mold on the underside of leaves in humid mornings", "Brown firm rot on green fruit"],
+        "treatment": ["Act fast: remove and destroy infected leaves/plants immediately", "Apply a copper-based fungicide as soon as possible", "Improve airflow around plants and stop overhead watering"],
+        "prevention": ["Plant resistant varieties and avoid excess humidity", "Do not plant tomatoes near potatoes and rotate every 3 years"]
+      },
+      "es": {
+        "explanation": "El tizón tardío es una enfermedad de propagación rápida causada por el oomiceto Phytophthora infestans (el mismo de la hambruna irlandesa de la patata). Puede destruir un cultivo en días con humedad.",
+        "symptoms": ["Manchas grandes, irregulares y acuosas de color marrón en las hojas", "Moho blanco en el envés de las hojas en mañanas húmedas", "Podredumbre marrón y firme en frutos verdes"],
+        "treatment": ["Actúa rápido: retira y destruye las hojas/plantas infectadas de inmediato", "Aplica un fungicida a base de cobre lo antes posible", "Mejora la ventilación y deja de regar por encima de las hojas"],
+        "prevention": ["Planta variedades resistentes y evita el exceso de humedad", "No plantes tomates cerca de patatas y rota cada 3 años"]
+      },
+      "va": {
+        "explanation": "La peste tardana és una malaltia de propagació ràpida causada per l'oomicet Phytophthora infestans. Pot destruir un cultiu en dies amb humitat.",
+        "symptoms": ["Taques grans, irregulars i aquoses de color marró en les fulles", "Floridura blanca al revés de les fulles en matins humits", "Podridura marró i ferma en fruits verds"],
+        "treatment": ["Actua ràpid: retira i destruïx les fulles/plantes infectades immediatament", "Aplica un fungicida a base de coure com més prompte millor", "Millora la ventilació i deixa de regar per damunt de les fulles"],
+        "prevention": ["Planta varietats resistents i evita l'excés d'humitat", "No plantes tomàquets a prop de patates i rota cada 3 anys"]
+      }
+    },
+    "Leaf Mold": {
+      "en": {
+        "explanation": "Leaf mold is caused by the fungus Passalora fulva. It thrives in high humidity and poor ventilation, common in greenhouses.",
+        "symptoms": ["Pale yellow spots on the upper side of leaves", "Olive-green to grayish mold on the underside of the spots", "Leaves curling and drying but usually staying on the plant"],
+        "treatment": ["Improve ventilation and reduce humidity around the plants", "Remove and destroy affected leaves", "Apply a sulfur or copper-based fungicide if it spreads"],
+        "prevention": ["Use resistant varieties and avoid overhead irrigation", "Space plants well and prune lower leaves for airflow"]
+      },
+      "es": {
+        "explanation": "El moho de la hoja es causado por el hongo Passalora fulva. Prospera con humedad alta y mala ventilación, común en invernaderos.",
+        "symptoms": ["Manchas amarillo pálido en el haz de las hojas", "Moho verde oliva a grisáceo en el envés de las manchas", "Hojas que se enrollan y secan pero suelen quedar en la planta"],
+        "treatment": ["Mejora la ventilación y reduce la humedad alrededor de las plantas", "Retira y destruye las hojas afectadas", "Aplica un fungicida a base de azufre o cobre si se extiende"],
+        "prevention": ["Usa variedades resistentes y evita el riego por aspersión", "Espacia bien las plantas y poda las hojas bajas para ventilar"]
+      },
+      "va": {
+        "explanation": "La floridura de la fulla la causa el fong Passalora fulva. Prospera amb humitat alta i mala ventilació, comú en hivernacles.",
+        "symptoms": ["Taques groc pàl·lid a la cara de les fulles", "Floridura verd oliva a grisenca al revés de les taques", "Fulles que s'enrollen e ixequen però solen quedar a la planta"],
+        "treatment": ["Millora la ventilació i redueix la humitat al voltant de les plantes", "Retira i destruïx les fulles afectades", "Aplica un fungicida a base de sofre o coure si s'extén"],
+        "prevention": ["Usa varietats resistents i evita el reg per aspersió", "Espàcia bé les plantes i poda les fulles baixes per a ventilar"]
+      }
+    },
+    "Mosaic Virus": {
+      "en": {
+        "explanation": "Tomato mosaic virus (ToMV) is a highly contagious virus spread by contact, tools, and hands. There is no cure, so management is about stopping the spread.",
+        "symptoms": ["Mottled light and dark green mosaic pattern on leaves", "Deformed, narrow or fern-like new leaves", "Stunted plants and mottled fruit"],
+        "treatment": ["There is no cure: remove and destroy infected plants promptly", "Disinfect tools and wash hands after handling infected plants", "Control aphids and other insects that spread viruses"],
+        "prevention": ["Plant resistant varieties and certified virus-free seedlings", "Avoid smoking near plants (tobacco can carry the virus)"]
+      },
+      "es": {
+        "explanation": "El virus del mosaico del tomate (ToMV) es muy contagioso y se propaga por contacto, herramientas y manos. No tiene cura, así que la gestión consiste en frenar su propagación.",
+        "symptoms": ["Patrón moteado de mosaico verde claro y oscuro en las hojas", "Hojas nuevas deformadas, estrechas o como helechos", "Plantas enanas y frutos moteados"],
+        "treatment": ["No hay cura: retira y destruye las plantas infectadas cuanto antes", "Desinfecta herramientas y lávate las manos tras tocar plantas infectadas", "Controla pulgones y otros insectos que propagan virus"],
+        "prevention": ["Planta variedades resistentes y plantones certificados libres de virus", "Evita fumar cerca de las plantas (el tabaco puede portar el virus)"]
+      },
+      "va": {
+        "explanation": "El virus del mosaic del tomàquet (ToMV) és molt contagiós i es propaga per contacte, ferramentes i mans. No té cura, així que la gestió consisteix a frenar la propagació.",
+        "symptoms": ["Patró tacat de mosaic verd clar i fosc en les fulles", "Fulles noves deformades, estretes o com falgueres", "Plantes nanificades i fruits tacats"],
+        "treatment": ["No hi ha cura: retira i destruïx les plantes infectades com més prompte millor", "Desinfecta les ferramentes i renta't les mans després de tocar plantes infectades", "Controla els pugons i altres insectes que propaguen virus"],
+        "prevention": ["Planta varietats resistents i planter certificat lliure de virus", "Evita fumar a prop de les plantes (el tabac pot portar el virus)"]
+      }
+    },
+    "Septoria Leaf Spot": {
+      "en": {
+        "explanation": "Septoria leaf spot is a fungal disease (Septoria lycopersici) that covers leaves with many small spots, weakening the plant through defoliation.",
+        "symptoms": ["Many small circular spots (1-3 mm) with gray centers and dark borders", "Tiny black dots (spore structures) in the spot centers", "Spots starting on lower, older leaves and moving up"],
+        "treatment": ["Remove and destroy infected lower leaves", "Apply a copper-based fungicide every 7-10 days", "Mulch to prevent spores splashing from soil"],
+        "prevention": ["Rotate crops for at least 2 years and clean plant debris", "Water at the base and space plants for airflow"]
+      },
+      "es": {
+        "explanation": "La mancha foliar por Septoria es una enfermedad fúngica (Septoria lycopersici) que cubre las hojas de muchas manchas pequeñas, debilitando la planta por defoliación.",
+        "symptoms": ["Muchas manchas circulares pequeñas (1-3 mm) con centro gris y borde oscuro", "Puntos negros diminutos (estructuras de esporas) en el centro de las manchas", "Manchas que empiezan en hojas bajas y viejas y suben"],
+        "treatment": ["Retira y destruye las hojas bajas infectadas", "Aplica un fungicida a base de cobre cada 7-10 días", "Acolcha el suelo para evitar salpicaduras de esporas"],
+        "prevention": ["Rota cultivos durante al menos 2 años y limpia restos vegetales", "Riega en la base y espacia las plantas para ventilar"]
+      },
+      "va": {
+        "explanation": "La tacatera foliar per Septoria és una malaltia fúngica (Septoria lycopersici) que cobreix les fulles de moltes taques menudes, debilitant la planta per defoliació.",
+        "symptoms": ["Moltes taques circulars menudes (1-3 mm) amb centre gris i vora fosca", "Punts negres diminuts (estructures d'espores) al centre de les taques", "Taques que comencen en fulles baixes i velles i pugen"],
+        "treatment": ["Retira i destruïx les fulles baixes infectades", "Aplica un fungicida a base de coure cada 7-10 dies", "Encoixina el sòl per a evitar esquitxades d'espores"],
+        "prevention": ["Rota cultius durant almenys 2 anys i neteja restes vegetals", "Rega a la base i espàcia les plantes per a ventilar"]
+      }
+    },
+    "Spider Mites": {
+      "en": {
+        "explanation": "Spider mites are tiny pests (not a disease) that suck sap from leaves, especially in hot, dry conditions. They multiply extremely fast.",
+        "symptoms": ["Tiny yellow or white stippling dots on leaves", "Fine silky webbing on the underside of leaves", "Leaves turning bronze/yellow and drying in severe attacks"],
+        "treatment": ["Spray leaves (especially undersides) with a strong water jet", "Apply neem oil or potassium soap every 5-7 days", "Release predatory mites (Phytoseiulus) as biological control if available"],
+        "prevention": ["Keep humidity up and avoid dust around plants", "Control weeds and inspect undersides of leaves regularly"]
+      },
+      "es": {
+        "explanation": "La araña roja es una plaga diminuta (no una enfermedad) que chupa la savia de las hojas, sobre todo en condiciones calurosas y secas. Se multiplica muy rápido.",
+        "symptoms": ["Puntos diminutos amarillos o blancos (picaduras) en las hojas", "Telarañas finas y sedosas en el envés de las hojas", "Hojas que se vuelven bronce/amarillas y se secan en ataques graves"],
+        "treatment": ["Pulveriza las hojas (sobre todo el envés) con un chorro fuerte de agua", "Aplica aceite de neem o jabón potásico cada 5-7 días", "Suelta ácaros depredadores (Phytoseiulus) como control biológico si es posible"],
+        "prevention": ["Mantén la humedad alta y evita el polvo alrededor de las plantas", "Controla las malas hierbas e inspecciona el envés de las hojas regularmente"]
+      },
+      "va": {
+        "explanation": "L'aranya roja és una plaga diminuta (no una malaltia) que xucla la saba de les fulles, sobre tot en condicions caloroses i seques. Es multiplica molt ràpid.",
+        "symptoms": ["Punts diminuts grocs o blancs (picades) en les fulles", "Teranyines fines i sedoses al revés de les fulles", "Fulles que es tornen bronze/grogues i s'eixequen en atacs greus"],
+        "treatment": ["Pulveritza les fulles (sobre tot el revés) amb un raig fort d'aigua", "Aplica oli de neem o sabó potàssic cada 5-7 dies", "Allibera àcars depredadors (Phytoseiulus) com a control biològic si és possible"],
+        "prevention": ["Manté la humitat alta i evita la pols al voltant de les plantes", "Controla les males herbes i inspecciona el revés de les fulles regularment"]
+      }
+    },
+    "Target Spot": {
+      "en": {
+        "explanation": "Target spot is caused by the fungus Corynespora cassiicola. It creates brown lesions with concentric rings, favored by warm humid weather.",
+        "symptoms": ["Brown spots with concentric rings and a yellow halo", "Spots on leaves, stems and sometimes fruit", "Severe cases cause leaf drop and sunscald on fruit"],
+        "treatment": ["Remove and destroy affected leaves", "Apply a copper-based fungicide", "Increase airflow with pruning and wider spacing"],
+        "prevention": ["Avoid overhead irrigation and water early in the day", "Rotate crops and remove plant debris after harvest"]
+      },
+      "es": {
+        "explanation": "La mancha diana es causada por el hongo Corynespora cassiicola. Crea lesiones marrones con anillos concéntricos, favorecida por clima cálido y húmedo.",
+        "symptoms": ["Manchas marrones con anillos concéntricos y halo amarillo", "Manchas en hojas, tallos y a veces frutos", "Casos graves causan caída de hojas y quemaduras solares en frutos"],
+        "treatment": ["Retira y destruye las hojas afectadas", "Aplica un fungicida a base de cobre", "Aumenta la ventilación con poda y mayor separación"],
+        "prevention": ["Evita el riego por aspersión y riega temprano en el día", "Rota cultivos y elimina restos vegetales tras la cosecha"]
+      },
+      "va": {
+        "explanation": "La tacatera diana la causa el fong Corynespora cassiicola. Crea lesions marrons amb anells concèntrics, afavorida pel clima càlid i humit.",
+        "symptoms": ["Taques marrons amb anells concèntrics i halo groc", "Taques en fulles, tiges i de vegades fruits", "Casos greus causen caiguda de fulles i cremades solars en fruits"],
+        "treatment": ["Retira i destruïx les fulles afectades", "Aplica un fungicida a base de coure", "Augmenta la ventilació amb poda i major separació"],
+        "prevention": ["Evita el reg per aspersió i rega d'hora en el dia", "Rota cultius i elimina restes vegetals després de la collita"]
+      }
+    },
+    "Yellow Leaf Curl Virus": {
+      "en": {
+        "explanation": "Tomato yellow leaf curl virus (TYLCV) is transmitted by whiteflies. Infected plants stop growing and produce very few fruits. There is no cure.",
+        "symptoms": ["Leaves curling upward and turning yellow between the veins", "Stunted, bushy plants with flower drop", "Severe yield loss when infection happens early"],
+        "treatment": ["There is no cure: remove infected plants to protect the rest", "Control whiteflies with yellow sticky traps and neem oil", "Use reflective (silver) mulch to repel whiteflies"],
+        "prevention": ["Use insect netting and resistant varieties", "Control weeds that host whiteflies near the crop"]
+      },
+      "es": {
+        "explanation": "El virus del rizado amarillo de la hoja del tomate (TYLCV) es transmitido por la mosca blanca. Las plantas infectadas dejan de crecer y producen muy pocos frutos. No tiene cura.",
+        "symptoms": ["Hojas que se enrollan hacia arriba y amarillean entre las venas", "Plantas enanas y arbustivas con caída de flores", "Pérdida severa de cosecha cuando la infección es temprana"],
+        "treatment": ["No hay cura: retira las plantas infectadas para proteger al resto", "Controla la mosca blanca con trampas adhesivas amarillas y aceite de neem", "Usa acolchado reflectante (plateado) para repeler la mosca blanca"],
+        "prevention": ["Usa mallas antiinsectos y variedades resistentes", "Controla las malas hierbas que albergan mosca blanca cerca del cultivo"]
+      },
+      "va": {
+        "explanation": "El virus de l'enrotllament groc de la fulla del tomàquet (TYLCV) el transmet la mosca blanca. Les plantes infectades deixen de créixer i produeixen molt pocs fruits. No té cura.",
+        "symptoms": ["Fulles que s'enrotllen cap amunt i groguegen entre les venes", "Plantes nanificades i arbustives amb caiguda de flors", "Pèrdua severa de collita quan la infecció és primerenca"],
+        "treatment": ["No hi ha cura: retira les plantes infectades per a protegir la resta", "Controla la mosca blanca amb trampes adhesives grogues i oli de neem", "Usa encoixinat reflectant (platejat) per a repel·lir la mosca blanca"],
+        "prevention": ["Usa malles antiinsectes i varietats resistents", "Controla les males herbes que alberguen mosca blanca a prop del cultiu"]
+      }
+    }
+  },
+  "Rice": {
+    "Bacterial Leaf Blight": {
+      "en": {
+        "explanation": "Bacterial leaf blight (Xanthomonas oryzae) is one of the most serious rice diseases. It causes yellow-white stripes that spread from leaf tips and edges.",
+        "symptoms": ["Yellow to white stripes starting at leaf tips and margins", "Wavy lesion edges and bacterial ooze droplets in humid mornings", "Leaves drying and dying as lesions expand"],
+        "treatment": ["Apply a copper-based bactericide at early stages", "Drain the field temporarily and avoid excess nitrogen fertilizer", "Remove and destroy severely infected plants"],
+        "prevention": ["Plant certified resistant varieties and treated seed", "Avoid field-to-field water flow and balance fertilization"]
+      },
+      "es": {
+        "explanation": "El tizón bacteriano de la hoja (Xanthomonas oryzae) es una de las enfermedades más serias del arroz. Causa franjas amarillo-blancas que se extienden desde las puntas y bordes de las hojas.",
+        "symptoms": ["Franjas amarillas a blancas que empiezan en puntas y márgenes de las hojas", "Bordes ondulados de las lesiones y gotitas de exudado bacteriano en mañanas húmedas", "Hojas que se secan y mueren al expandirse las lesiones"],
+        "treatment": ["Aplica un bactericida a base de cobre en etapas tempranas", "Drena el campo temporalmente y evita el exceso de nitrógeno", "Retira y destruye las plantas gravemente infectadas"],
+        "prevention": ["Planta variedades resistentes certificadas y semilla tratada", "Evita el flujo de agua entre campos y equilibra la fertilización"]
+      },
+      "va": {
+        "explanation": "La peste bacteriana de la fulla (Xanthomonas oryzae) és una de les malalties més serioses de l'arròs. Causa franges groc-blancs que s'estenen des de les puntes i vores de les fulles.",
+        "symptoms": ["Franges grogues a blanques que comencen en puntes i marges de les fulles", "Vores ondulades de les lesions i gotetes d'exsudat bacterià en matins humits", "Fulles que s'eixequen i moren a l'expandir-se les lesions"],
+        "treatment": ["Aplica un bactericida a base de coure en etapes primerenques", "Drena el camp temporalment i evita l'excés de nitrogen", "Retira i destruïx les plantes greument infectades"],
+        "prevention": ["Planta varietats resistents certificades i llavor tractada", "Evita el flux d'aigua entre camps i equilibra la fertilització"]
+      }
+    },
+    "Bacterial Leaf Streak": {
+      "en": {
+        "explanation": "Bacterial leaf streak (Xanthomonas oryzae pv. oryzicola) produces fine, translucent streaks along the leaf veins that can reduce yield significantly.",
+        "symptoms": ["Fine, water-soaked translucent streaks between leaf veins", "Streaks turning yellow-brown and merging", "Bacterial ooze that dries into yellow beads on leaves"],
+        "treatment": ["Apply a copper-based bactericide when streaks first appear", "Remove infected crop debris after harvest", "Avoid excessive nitrogen and overhead irrigation"],
+        "prevention": ["Use clean certified seed and resistant varieties", "Treat seeds with hot water before sowing"]
+      },
+      "es": {
+        "explanation": "La raya bacteriana de la hoja (Xanthomonas oryzae pv. oryzicola) produce estrías finas y translúcidas a lo largo de las venas que pueden reducir mucho el rendimiento.",
+        "symptoms": ["Estrías finas, acuosas y translúcidas entre las venas de las hojas", "Estrías que se vuelven amarillo-marrón y se unen", "Exudado bacteriano que se seca formando perlas amarillas en las hojas"],
+        "treatment": ["Aplica un bactericida a base de cobre cuando aparezcan las primeras estrías", "Elimina los restos de cultivo infectados tras la cosecha", "Evita el exceso de nitrógeno y el riego por aspersión"],
+        "prevention": ["Usa semilla certificada limpia y variedades resistentes", "Trata las semillas con agua caliente antes de sembrar"]
+      },
+      "va": {
+        "explanation": "L'estria bacteriana de la fulla (Xanthomonas oryzae pv. oryzicola) produïx estries fines i translúcides al llarg de les venes que poden reduir molt el rendiment.",
+        "symptoms": ["Estries fines, aquoses i translúcides entre les venes de les fulles", "Estries que es tornen groc-marró i s'uneixen", "Exsudat bacterià que s'eixeca formant perles grogues en les fulles"],
+        "treatment": ["Aplica un bactericida a base de coure quan apareguen les primeres estries", "Elimina les restes de cultiu infectades després de la collita", "Evita l'excés de nitrogen i el reg per aspersió"],
+        "prevention": ["Usa llavor certificada neta i varietats resistents", "Tracta les llavors amb aigua calenta abans de sembrar"]
+      }
+    },
+    "Bacterial Panicle Blight": {
+      "en": {
+        "explanation": "Bacterial panicle blight (Burkholderia glumae) attacks the rice flowers, causing discolored, empty grains that stay upright instead of bending with weight.",
+        "symptoms": ["Panicles with discolored brown grains, often at the base of the floret", "Empty or partially filled grains that remain upright", "Dark streaks on leaf sheaths near the panicle"],
+        "treatment": ["Apply copper-based products around booting/heading stage", "Reduce nitrogen fertilization during flowering", "Remove heavily infected panicles from the field"],
+        "prevention": ["Use certified clean seed (the bacteria is seed-borne)", "Plant resistant/tolerant varieties and avoid late planting"]
+      },
+      "es": {
+        "explanation": "El tizón bacteriano de la panícula (Burkholderia glumae) ataca las flores del arroz, causando granos descoloridos y vacíos que permanecen erguidos en lugar de doblarse por el peso.",
+        "symptoms": ["Panículas con granos descoloridos marrones, a menudo en la base de la flor", "Granos vacíos o parcialmente llenos que permanecen erguidos", "Franjas oscuras en las vainas foliares cerca de la panícula"],
+        "treatment": ["Aplica productos a base de cobre alrededor de la etapa de espigado", "Reduce la fertilización nitrogenada durante la floración", "Retira del campo las panículas muy infectadas"],
+        "prevention": ["Usa semilla certificada limpia (la bacteria se transmite por semilla)", "Planta variedades resistentes/tolerantes y evita la siembra tardía"]
+      },
+      "va": {
+        "explanation": "La peste bacteriana de la panícula (Burkholderia glumae) ataca les flors de l'arròs, causant grans descolorits i buits que romanen erectes en lloc de doblegar-se pel pes.",
+        "symptoms": ["Panícules amb grans descolorits marrons, sovint a la base de la flor", "Grans buits o parcialment plens que romanen erectes", "Franges fosques en les beaines foliars a prop de la panícula"],
+        "treatment": ["Aplica productes a base de coure al voltant de l'etapa d'espigat", "Reduïx la fertilització nitrogenada durant la floració", "Retira del camp les panícules molt infectades"],
+        "prevention": ["Usa llavor certificada neta (el bacteri es transmet per llavor)", "Planta varietats resistents/tolerants i evita la sembra tardana"]
+      }
+    },
+    "Brown Spot": {
+      "en": {
+        "explanation": "Brown spot (Bipolaris oryzae) causes oval brown lesions on leaves and grains. It often signals poor plant nutrition, especially potassium deficiency.",
+        "symptoms": ["Oval brown spots with a gray center and yellow halo on leaves", "Dark brown spots on grains", "General weakening in poorly fertilized fields"],
+        "treatment": ["Correct fertilization, especially potassium and silicon", "Apply a copper or mancozeb-based fungicide in severe cases", "Remove infected residue and improve field drainage"],
+        "prevention": ["Keep soil fertility balanced (healthy plants resist it)", "Use treated, certified seed"]
+      },
+      "es": {
+        "explanation": "La mancha marrón (Bipolaris oryzae) causa lesiones ovales marrones en hojas y granos. A menudo indica mala nutrición de la planta, especialmente deficiencia de potasio.",
+        "symptoms": ["Manchas ovales marrones con centro gris y halo amarillo en las hojas", "Manchas marrón oscuro en los granos", "Debilidad general en campos mal fertilizados"],
+        "treatment": ["Corrige la fertilización, especialmente potasio y silicio", "Aplica un fungicida a base de cobre o mancozeb en casos graves", "Elimina residuos infectados y mejora el drenaje del campo"],
+        "prevention": ["Mantén la fertilidad del suelo equilibrada (las plantas sanas lo resisten)", "Usa semilla certificada y tratada"]
+      },
+      "va": {
+        "explanation": "La tacatera marró (Bipolaris oryzae) causa lesions ovades marrons en fulles i grans. Sovint indica mala nutrició de la planta, especialment deficiència de potassi.",
+        "symptoms": ["Taques ovades marrons amb centre gris i halo groc en les fulles", "Taques marró fosc en els grans", "Debilitat general en camps mal fertilitzats"],
+        "treatment": ["Corregeix la fertilització, especialment potassi i silici", "Aplica un fungicida a base de coure o mancozeb en casos greus", "Elimina residus infectats i millora el drenatge del camp"],
+        "prevention": ["Manté la fertilitat del sòl equilibrada (les plantes sanes ho resisteixen)", "Usa llavor certificada i tractada"]
+      }
+    },
+    "Dead Heart": {
+      "en": {
+        "explanation": "Dead heart is caused by stem borer caterpillars (not a disease) that bore into the rice stem, killing the central shoot which dries out and pulls out easily.",
+        "symptoms": ["Central shoot (heart) dried and dead while outer leaves stay green", "Dead shoot pulls out easily with a gentle tug", "Bore holes and frass (caterpillar droppings) at the stem base"],
+        "treatment": ["Remove and destroy dead hearts along with the caterpillar inside", "Release Trichogramma wasps (biological control) or use pheromone traps", "Apply neem-based products at the stem base if infestation is high"],
+        "prevention": ["Destroy rice stubble after harvest to kill overwintering larvae", "Use light traps and plant early to avoid peak moth flights"]
+      },
+      "es": {
+        "explanation": "El corazón muerto lo causan las orugas del barrenador del tallo (no es una enfermedad) que perforan el tallo del arroz, matando el brote central que se seca y se arranca fácilmente.",
+        "symptoms": ["Brote central (corazón) seco y muerto mientras las hojas externas siguen verdes", "El brote muerto se arranca fácilmente con un tirón suave", "Agujeros de perforación y excrementos de oruga en la base del tallo"],
+        "treatment": ["Retira y destruye los corazones muertos junto con la oruga interior", "Suelta avispas Trichogramma (control biológico) o usa trampas de feromonas", "Aplica productos a base de neem en la base del tallo si la plaga es alta"],
+        "prevention": ["Destruye los rastrojos tras la cosecha para matar las larvas invernantes", "Usa trampas de luz y siembra temprano para evitar los picos de vuelo de la polilla"]
+      },
+      "va": {
+        "explanation": "El cor mort el causen les erugues del foradador de la tija (no és una malaltia) que foraden la tija de l'arròs, matant el brot central que s'eixeca i s'arrenca fàcilment.",
+        "symptoms": ["Brot central (cor) eixec i mort mentre les fulles externes continuen verdes", "El brot mort s'arrenca fàcilment amb una estirada sua", "Forats de perforació i excrements d'eruga a la base de la tija"],
+        "treatment": ["Retira i destruïx els cors morts junt amb l'eruga interior", "Allibera vespes Trichogramma (control biològic) o usa trampes de feromones", "Aplica productes a base de neem a la base de la tija si la plaga és alta"],
+        "prevention": ["Destruïx els rastolls després de la collita per a matar les larves hivernants", "Usa trampes de llum i sembra d'hora per a evitar els pics de vol de l'arna"]
+      }
+    },
+    "Downy Mildew": {
+      "en": {
+        "explanation": "Downy mildew in rice is caused by water molds (oomycetes) that thrive in waterlogged, poorly drained fields.",
+        "symptoms": ["Yellow patches on leaves with downy grayish growth on the underside", "Stunted plants in wet areas of the field", "Leaves drying from the tips in severe cases"],
+        "treatment": ["Improve field drainage and reduce standing water time", "Apply a copper or mancozeb-based fungicide", "Remove heavily infected plants"],
+        "prevention": ["Avoid prolonged waterlogging; use alternate wetting and drying", "Plant tolerant varieties in fields with history of the disease"]
+      },
+      "es": {
+        "explanation": "El mildiu velloso del arroz es causado por mohos acuáticos (oomicetos) que prosperan en campos encharcados y mal drenados.",
+        "symptoms": ["Manchas amarillas en las hojas con crecimiento velloso grisáceo en el envés", "Plantas enanas en las zonas húmedas del campo", "Hojas que se secan desde las puntas en casos graves"],
+        "treatment": ["Mejora el drenaje del campo y reduce el tiempo de encharcamiento", "Aplica un fungicida a base de cobre o mancozeb", "Retira las plantas muy infectadas"],
+        "prevention": ["Evita el encharcamiento prolongado; usa riego alterno (seca y moja)", "Planta variedades tolerantes en campos con historial de la enfermedad"]
+      },
+      "va": {
+        "explanation": "El míldiu vellutat de l'arròs el causen fongs aquàtics (oomicets) que prosperen en camps negats i mal drenats.",
+        "symptoms": ["Taques grogues en les fulles amb creixement vellutat grisenc al revés", "Plantes nanificades en les zones humides del camp", "Fulles que s'eixequen des de les puntes en casos greus"],
+        "treatment": ["Millora el drenatge del camp i redueix el temps d'negat", "Aplica un fungicida a base de coure o mancozeb", "Retira les plantes molt infectades"],
+        "prevention": ["Evita l'negat prolongat; usa reg altern (seca i mulla)", "Planta varietats tolerants en camps amb historial de la malaltia"]
+      }
+    },
+    "Healthy Rice": {
+      "en": {
+        "explanation": "Great news — your rice plant looks healthy! No signs of disease were detected. Keep up the good field management.",
+        "symptoms": ["No disease symptoms detected", "Uniform green leaves without spots or streaks", "Normal tillering and growth"],
+        "treatment": ["No treatment needed — maintain balanced fertilization", "Keep proper water management (avoid prolonged waterlogging)", "Scout the field weekly to catch problems early"],
+        "prevention": ["Rotate with non-host crops where possible and use clean seed", "Keep field bunds clean of weeds that host pests"]
+      },
+      "es": {
+        "explanation": "Buenas noticias — ¡tu planta de arroz parece sana! No se detectaron signos de enfermedad. Mantén el buen manejo del campo.",
+        "symptoms": ["No se detectaron síntomas de enfermedad", "Hojas verdes uniformes sin manchas ni estrías", "Macollaje y crecimiento normales"],
+        "treatment": ["No necesita tratamiento — mantén la fertilización equilibrada", "Mantén un buen manejo del agua (evita encharcamientos prolongados)", "Explora el campo semanalmente para detectar problemas a tiempo"],
+        "prevention": ["Rota con cultivos no hospederos si es posible y usa semilla limpia", "Mantén los bordes del campo limpios de hierbas que albergan plagas"]
+      },
+      "va": {
+        "explanation": "Bones notícies — la teua planta d'arròs sembla sana! No s'han detectat signes de malaltia. Manté la bona gestió del camp.",
+        "symptoms": ["No s'han detectat símptomes de malaltia", "Fulles verdes uniformes sense taques ni estries", "Fillols i creixement normals"],
+        "treatment": ["No necessita tractament — manté la fertilització equilibrada", "Manté una bona gestió de l'aigua (evita negats prolongats)", "Explora el camp setmanalment per a detectar problemes a temps"],
+        "prevention": ["Rota amb cultius no hostes si és possible i usa llavor neta", "Manté les vores del camp netes d'herbes que alberguen plagues"]
+      }
+    },
+    "Rice Blast": {
+      "en": {
+        "explanation": "Rice blast (Magnaporthe oryzae) is the most destructive fungal disease of rice worldwide. It creates diamond-shaped lesions and can wipe out entire fields.",
+        "symptoms": ["Diamond or eye-shaped lesions with gray centers and brown margins", "Lesions on leaves, nodes and panicle necks", "Neck rot causing panicles to break and turn white ('white heads')"],
+        "treatment": ["Keep the field continuously flooded to reduce spore spread", "Apply silicon amendments to strengthen plants; use copper-based fungicide if severe", "Remove and destroy crop residue after harvest"],
+        "prevention": ["Plant resistant varieties — the best defense by far", "Avoid excess nitrogen and plant with good spacing"]
+      },
+      "es": {
+        "explanation": "La piriculariosis (Magnaporthe oryzae) es la enfermedad fúngica más destructiva del arroz en el mundo. Crea lesiones en forma de diamante y puede arrasar campos enteros.",
+        "symptoms": ["Lesiones en forma de diamante u ojo con centro gris y margen marrón", "Lesiones en hojas, nudos y cuello de la panícula", "Podredumbre del cuello que rompe las panículas y las vuelve blancas ('cabezas blancas')"],
+        "treatment": ["Mantén el campo continuamente inundado para reducir la propagación de esporas", "Aplica enmiendas de silicio para fortalecer las plantas; usa fungicida de cobre si es grave", "Retira y destruye los residuos de cultivo tras la cosecha"],
+        "prevention": ["Planta variedades resistentes — la mejor defensa con diferencia", "Evita el exceso de nitrógeno y planta con buena separación"]
+      },
+      "va": {
+        "explanation": "La piriculariosi (Magnaporthe oryzae) és la malaltia fúngica més destructiva de l'arròs al món. Crea lesions en forma de diamant i pot arrasar camps sencers.",
+        "symptoms": ["Lesions en forma de diamant o ull amb centre gris i marge marró", "Lesions en fulles, nusos i coll de la panícula", "Podridura del coll que trenca les panícules i les torna blanques ('caps blancs')"],
+        "treatment": ["Manté el camp contínuament inundat per a reduir la propagació d'espores", "Aplica esmenes de silici per a enfortir les plantes; usa fungicida de coure si és greu", "Retira i destruïx els residus de cultiu després de la collita"],
+        "prevention": ["Planta varietats resistents — la millor defensa amb diferència", "Evita l'excés de nitrogen i planta amb bona separació"]
+      }
+    },
+    "Rice Hispa": {
+      "en": {
+        "explanation": "Rice hispa is a spiny beetle pest (not a disease). Both adults and larvae scrape the leaf surface, leaving white streaks that reduce photosynthesis.",
+        "symptoms": ["White or translucent streaks along the leaf blade", "Scraped leaf surface with only the lower epidermis left", "Small dark spiny beetles on leaves"],
+        "treatment": ["Clip and destroy the tips of heavily damaged leaves", "Spray neem oil or neem seed extract", "Handpick beetles in small fields or use light traps"],
+        "prevention": ["Keep the field and bunds free of grassy weeds", "Avoid excessive nitrogen which attracts the beetles"]
+      },
+      "es": {
+        "explanation": "La hispa del arroz es un escarabajo espinoso (plaga, no enfermedad). Adultos y larvas raspan la superficie de la hoja, dejando estrías blancas que reducen la fotosíntesis.",
+        "symptoms": ["Estrías blancas o translúcidas a lo largo de la hoja", "Superficie de la hoja raspada, dejando solo la epidermis inferior", "Escarabajos pequeños, oscuros y espinosos en las hojas"],
+        "treatment": ["Recorta y destruye las puntas de las hojas muy dañadas", "Pulveriza aceite de neem o extracto de semilla de neem", "Recoge los escarabajos a mano en campos pequeños o usa trampas de luz"],
+        "prevention": ["Mantén el campo y los bordes libres de hierbas gramíneas", "Evita el exceso de nitrógeno que atrae a los escarabajos"]
+      },
+      "va": {
+        "explanation": "La hispa de l'arròs és un escarabat espinos (plaga, no malaltia). Adults i larves rasquen la superficie de la fulla, deixant estries blanques que redueixen la fotosíntesi.",
+        "symptoms": ["Estries blanques o translúcides al llarg de la fulla", "Superficie de la fulla raspada, deixant només l'epidermis inferior", "Escarabats menuts, foscos i espinosos en les fulles"],
+        "treatment": ["Retalla i destruïx les puntes de les fulles molt danyades", "Pulveritza oli de neem o extracte de llavor de neem", "Recollix els escarabats a mà en camps menuts o usa trampes de llum"],
+        "prevention": ["Manté el camp i les vores lliures d'herbes gramínies", "Evita l'excés de nitrogen que atrau els escarabats"]
+      }
+    },
+    "Tungro": {
+      "en": {
+        "explanation": "Tungro is a viral disease transmitted by green leafhoppers. It causes yellow-orange discoloration and severe stunting. There is no cure.",
+        "symptoms": ["Leaves turning yellow to orange, starting at the tips", "Stunted plants with reduced tillering", "Young leaves emerging twisted or mottled"],
+        "treatment": ["There is no cure: remove infected plants (roguing) early", "Control green leafhoppers with neem oil and light traps", "Drain the field temporarily if infestation is severe"],
+        "prevention": ["Plant tungro-resistant varieties and certified seed", "Plant synchronously with neighboring fields to break the leafhopper cycle"]
+      },
+      "es": {
+        "explanation": "El tungro es una enfermedad viral transmitida por la chicharrita verde. Causa decoloración amarillo-naranja y enanismo severo. No tiene cura.",
+        "symptoms": ["Hojas que se vuelven amarillas a naranjas, empezando por las puntas", "Plantas enanas con macollaje reducido", "Hojas jóvenes que emergen retorcidas o moteadas"],
+        "treatment": ["No hay cura: retira las plantas infectadas (escarda) temprano", "Controla la chicharrita verde con aceite de neem y trampas de luz", "Drena el campo temporalmente si la plaga es severa"],
+        "prevention": ["Planta variedades resistentes al tungro y semilla certificada", "Siembra sincronizadamente con los campos vecinos para romper el ciclo de la chicharrita"]
+      },
+      "va": {
+        "explanation": "El tungro és una malaltia viral transmesa per la xarrupada verda. Causa decoloració groc-taronja i nanisme sever. No té cura.",
+        "symptoms": ["Fulles que es tornen grogues a taronjes, començant per les puntes", "Plantes nanificades amb fillols reduïts", "Fulles joves que emergixen retorçades o tacades"],
+        "treatment": ["No hi ha cura: retira les plantes infectades (escarda) d'hora", "Controla la xarrupada verda amb oli de neem i trampes de llum", "Drena el camp temporalment si la plaga és severa"],
+        "prevention": ["Planta varietats resistents al tungro i llavor certificada", "Sembra sincronitzadament amb els camps veïns per a trencar el cicle de la xarrupada"]
+      }
+    }
+  },
+  "Orange": {
+    "Black Spot": {
+      "en": {
+        "explanation": "Citrus black spot is a fungal disease (Phyllosticta citricarpa) that causes dark spots on fruit and leaves, reducing fruit quality and causing premature fruit drop.",
+        "symptoms": ["Dark brown to black spots on fruit, sometimes with a yellow halo", "Small black dots (fungal fruiting bodies) inside the spots", "Premature fruit drop in severe cases"],
+        "treatment": ["Apply copper-based fungicide sprays, especially after petal fall", "Remove and destroy mummified or fallen infected fruit", "Prune to improve air circulation in the canopy"],
+        "prevention": ["Avoid overhead irrigation and water early in the day", "Keep the orchard floor clean of fallen fruit and debris"]
+      },
+      "es": {
+        "explanation": "La mancha negra de los cítricos es una enfermedad fúngica (Phyllosticta citricarpa) que causa manchas oscuras en frutos y hojas, reduciendo la calidad y causando caída prematura del fruto.",
+        "symptoms": ["Manchas marrón oscuro a negras en los frutos, a veces con halo amarillo", "Puntos negros pequeños (cuerpos fructíferos del hongo) dentro de las manchas", "Caída prematura del fruto en casos graves"],
+        "treatment": ["Aplica pulverizaciones de fungicida a base de cobre, sobre todo tras la caída de pétalos", "Retira y destruye los frutos momificados o caídos infectados", "Poda para mejorar la circulación de aire en la copa"],
+        "prevention": ["Evita el riego por aspersión y riega temprano en el día", "Mantén el suelo del huerto limpio de frutos caídos y restos"]
+      },
+      "va": {
+        "explanation": "La tacatera negra dels cítrics és una malaltia fúngica (Phyllosticta citricarpa) que causa taques fosques en fruits i fulles, reduint la qualitat i causant caiguda prematura del fruit.",
+        "symptoms": ["Taques marró fosques a negres en els fruits, de vegades amb halo groc", "Punts negres menuts (cossos fructífers del fong) dins de les taques", "Caiguda prematura del fruit en casos greus"],
+        "treatment": ["Aplica polvoritzacions de fungicida a base de coure, sobre tot després de la caiguda de pètals", "Retira i destruïx els fruits momificats o caiguts infectats", "Poda per a millorar la circulació d'aire a la capçada"],
+        "prevention": ["Evita el reg per aspersió i rega d'hora en el dia", "Manté el sòl de l'hort net de fruits caiguts i restes"]
+      }
+    },
+    "Canker": {
+      "en": {
+        "explanation": "Citrus canker is a highly contagious bacterial disease (Xanthomonas citri) that creates raised corky lesions. It spreads by wind-driven rain and tools.",
+        "symptoms": ["Raised, corky, brown lesions with a yellow halo on leaves and fruit", "Lesions with a crater-like center", "Leaf and fruit drop in heavy infections"],
+        "treatment": ["Remove and destroy infected branches and fruit (prune in dry weather)", "Apply copper-based sprays protectively, especially before rainy periods", "Disinfect pruning tools between trees"],
+        "prevention": ["Plant certified disease-free trees", "Install windbreaks and control the leaf miner insect (its wounds let the bacteria in)"]
+      },
+      "es": {
+        "explanation": "El cancro de los cítricos es una enfermedad bacteriana muy contagiosa (Xanthomonas citri) que crea lesiones rugosas elevadas. Se propaga por la lluvia arrastrada por el viento y las herramientas.",
+        "symptoms": ["Lesiones marrones elevadas y rugosas con halo amarillo en hojas y frutos", "Lesiones con centro en forma de cráter", "Caída de hojas y frutos en infecciones fuertes"],
+        "treatment": ["Retira y destruye ramas y frutos infectados (poda en tiempo seco)", "Aplica pulverizaciones de cobre de forma protectora, sobre todo antes de lluvias", "Desinfecta las herramientas de poda entre árboles"],
+        "prevention": ["Planta árboles certificados libres de enfermedad", "Instala cortavientos y controla el minador de la hoja (sus heridas dejan entrar la bacteria)"]
+      },
+      "va": {
+        "explanation": "El càncer dels cítrics és una malaltia bacteriana molt contagiosa (Xanthomonas citri) que crea lesions rugoses elevades. Es propaga per la pluja arrossegada pel vent i les ferramentes.",
+        "symptoms": ["Lesions marrons elevades i rugoses amb halo groc en fulles i fruits", "Lesions amb centre en forma de cràter", "Caiguda de fulles i fruits en infeccions fortes"],
+        "treatment": ["Retira i destruïx branques i fruits infectats (poda en temps sec)", "Aplica polvoritzacions de coure de forma protectora, sobre tot abans de pluges", "Desinfecta les ferramentes de poda entre arbres"],
+        "prevention": ["Planta arbres certificats lliures de malaltia", "Instal·la tallavents i controla el minador de la fulla (les seues ferides deixen entrar el bacteri)"]
+      }
+    },
+    "Greening (HLB)": {
+      "en": {
+        "explanation": "Citrus greening (HLB, Huanglongbing) is the most devastating citrus disease worldwide, caused by bacteria spread by the Asian citrus psyllid. There is no cure.",
+        "symptoms": ["Blotchy, asymmetrical yellow mottling on leaves", "Small, lopsided, bitter fruit that stays partly green", "Yellow shoot-like growth and progressive tree decline"],
+        "treatment": ["There is no cure: remove infected trees promptly to protect the grove", "Control psyllids with neem oil, yellow sticky traps and encouraging natural enemies", "Apply balanced nutrition to prolong productive life of mildly affected trees"],
+        "prevention": ["Plant only certified HLB-free nursery trees", "Monitor for psyllids regularly and remove abandoned citrus nearby"]
+      },
+      "es": {
+        "explanation": "El greening de los cítricos (HLB, Huanglongbing) es la enfermedad más devastadora de los cítricos en el mundo, causada por bacterias propagadas por el psílido asiático. No tiene cura.",
+        "symptoms": ["Moteado amarillo asimétrico en las hojas", "Frutos pequeños, deformes y amargos que quedan parcialmente verdes", "Brotamientos amarillos y declive progresivo del árbol"],
+        "treatment": ["No hay cura: retira los árboles infectados cuanto antes para proteger el huerto", "Controla los psílidos con aceite de neem, trampas adhesivas amarillas y enemigos naturales", "Aplica nutrición equilibrada para prolongar la vida productiva de árboles levemente afectados"],
+        "prevention": ["Planta solo árboles de vivero certificados libres de HLB", "Monitorea psílidos regularmente y elimina cítricos abandonados cercanos"]
+      },
+      "va": {
+        "explanation": "El greening dels cítrics (HLB, Huanglongbing) és la malaltia més devastadora dels cítrics al món, causada per bacteris propagats pel psíl·lid asiàtic. No té cura.",
+        "symptoms": ["Tacat groc asimètric en les fulles", "Fruits menuts, deformes i amargs que queden parcialment verds", "Brotacions grogues i declivi progressiu de l'arbre"],
+        "treatment": ["No hi ha cura: retira els arbres infectats com més prompte millor per a protegir l'hort", "Controla els psíl·lids amb oli de neem, trampes adhesives grogues i enemics naturals", "Aplica nutrició equilibrada per a prolongar la vida productiva d'arbres lleument afectats"],
+        "prevention": ["Planta només arbres de viver certificats lliures de HLB", "Monitoreja psíl·lids regularment i elimina cítrics abandonats propers"]
+      }
+    },
+    "Healthy Orange": {
+      "en": {
+        "explanation": "Great news — your orange tree looks healthy! No signs of disease were detected. Keep up the good care.",
+        "symptoms": ["No disease symptoms detected", "Glossy, uniformly green leaves", "Normal fruit development"],
+        "treatment": ["No treatment needed — keep deep, infrequent watering", "Maintain balanced citrus fertilization (including micronutrients)", "Prune lightly for airflow and monitor monthly for psyllids"],
+        "prevention": ["Keep the area around the tree free of weeds and fallen fruit", "Inspect new growth regularly — most diseases show there first"]
+      },
+      "es": {
+        "explanation": "Buenas noticias — ¡tu naranjo parece sano! No se detectaron signos de enfermedad. Mantén los buenos cuidados.",
+        "symptoms": ["No se detectaron síntomas de enfermedad", "Hojas brillantes de color verde uniforme", "Desarrollo normal de los frutos"],
+        "treatment": ["No necesita tratamiento — mantén riegos profundos y espaciados", "Mantén la fertilización equilibrada para cítricos (incluidos micronutrientes)", "Poda ligeramente para ventilar y monitorea mensualmente los psílidos"],
+        "prevention": ["Mantén el área alrededor del árbol libre de hierbas y frutos caídos", "Inspecciona los brotes nuevos regularmente — la mayoría de enfermedades aparecen ahí primero"]
+      },
+      "va": {
+        "explanation": "Bones notícies — el teu taronger sembla sa! No s'han detectat signes de malaltia. Manté les bones cures.",
+        "symptoms": ["No s'han detectat símptomes de malaltia", "Fulles brillants de color verd uniforme", "Desenvolupament normal dels fruits"],
+        "treatment": ["No necessita tractament — manté regs profunds i espaiats", "Manté la fertilització equilibrada per a cítrics (inclosos micronutrients)", "Poda lleugerament per a ventilar i monitoreja mensualment els psíl·lids"],
+        "prevention": ["Manté l'àrea al voltant de l'arbre lliure d'herbes i fruits caiguts", "Inspecciona els brots nous regularment — la majoria de malalties apareixen allí primer"]
+      }
+    },
+    "Scab": {
+      "en": {
+        "explanation": "Citrus scab is a fungal disease (Elsinoe fawcettii) that causes corky, raised scabs on fruit and young leaves, mainly affecting fruit appearance.",
+        "symptoms": ["Corky, raised, warty scabs on fruit surface", "Twisted, deformed young leaves with scab pustules", "Pinkish-gray spots on new growth in wet weather"],
+        "treatment": ["Apply copper-based fungicide at new flush and petal fall", "Prune and destroy infected twigs and leaves", "Improve canopy airflow with pruning"],
+        "prevention": ["Avoid overhead irrigation on susceptible varieties", "Keep trees well pruned and remove old infected material"]
+      },
+      "es": {
+        "explanation": "La roña de los cítricos es una enfermedad fúngica (Elsinoe fawcettii) que causa costras rugosas y elevadas en frutos y hojas jóvenes, afectando principalmente la apariencia del fruto.",
+        "symptoms": ["Costras rugosas, elevadas y verrucosas en la superficie del fruto", "Hojas jóvenes retorcidas y deformadas con pústulas de roña", "Manchas rosadas-grisáceas en brotes nuevos con clima húmedo"],
+        "treatment": ["Aplica fungicida a base de cobre en el brotado nuevo y en la caída de pétalos", "Poda y destruye ramitas y hojas infectadas", "Mejora la ventilación de la copa con la poda"],
+        "prevention": ["Evita el riego por aspersión en variedades susceptibles", "Mantén los árboles bien podados y elimina material viejo infectado"]
+      },
+      "va": {
+        "explanation": "La ronya dels cítrics és una malaltia fúngica (Elsinoe fawcettii) que causa crostes rugoses i elevades en fruits i fulles joves, afectant principalment l'aparença del fruit.",
+        "symptoms": ["Crostes rugoses, elevades i verrugoses en la superfície del fruit", "Fulles joves retorçades i deformades amb pústules de ronya", "Taques rosades-grisenques en brots nous amb clima humit"],
+        "treatment": ["Aplica fungicida a base de coure en la brotació nova i en la caiguda de pètals", "Poda i destruïx branquetes i fulles infectades", "Millora la ventilació de la capçada amb la poda"],
+        "prevention": ["Evita el reg per aspersió en varietats susceptibles", "Manté els arbres ben podats i elimina material vell infectat"]
+      }
+    }
+  }
+}

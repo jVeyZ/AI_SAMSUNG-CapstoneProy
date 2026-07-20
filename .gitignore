@@ -3,3 +3,13 @@ results/
 data/
 _hlinktest/
 __pycache__/
+.pytest_cache/
+
+# Android / Gradle build artifacts
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.apk
+*.log
+results.zip

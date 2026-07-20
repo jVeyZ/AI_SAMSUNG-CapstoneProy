@@ -10,47 +10,16 @@ import torch
 from PIL import Image
 from crop_config import CROP_CLASSES, get_disease_name, get_num_classes
 from model_def import build_model, model_path, EVAL_TRANSFORM
+import llm_advice
 
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ---- LLM / TTS (graceful degradation if packages missing) ----------------
-_groq_available = True
-try:
-    from openai import OpenAI
-except ImportError:
-    _groq_available = False
-
+# ---- TTS (graceful degradation if package missing) -----------------------
 _gtts_available = True
 try:
     from gtts import gTTS
 except ImportError:
     _gtts_available = False
-
-
-def obtener_tratamiento_llm(enfermedad, cultivo):
-    if not _groq_available:
-        return "[LLM no disponible — instala `openai` y configura `st.secrets.GROQ_API_KEY`]"
-    client = OpenAI(
-        base_url="https://api.groq.com/openai/v1",
-        api_key=st.secrets.get("GROQ_API_KEY", ""),
-    )
-    respuesta = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{
-            "role": "system",
-            "content": (
-                "Actúas como un ingeniero agrónomo experto en {cultivo}. "
-                "El usuario tiene una planta con {enfermedad}. "
-                "Explícale de forma sencilla qué es la enfermedad, sus síntomas, "
-                "y dale 3 soluciones ecológicas o remedios caseros prácticos "
-                "para combatirla. Sé empático y directo."
-            ).format(cultivo=cultivo, enfermedad=enfermedad),
-        }, {
-            "role": "user",
-            "content": f"Mi planta de {cultivo} tiene: {enfermedad}",
-        }],
-    )
-    return respuesta.choices[0].message.content
 
 
 def generar_audio_gtts(texto):
@@ -134,24 +103,48 @@ with col2:
             plt.tight_layout()
             st.pyplot(fig)
 
-            # ---- LLM Treatment Advice ----------------------------------------
+            # ---- Treatment Advice (static + optional AI follow-up) -----------
             st.markdown("---")
-            st.markdown("### AI Treatment Advice")
+            st.markdown("### Treatment Advice")
 
-            llm_key = f"tratamiento_llm_{crop}"
-            if st.button(f"Get AI advice for {crop} — {disease_name}", type="primary"):
+            static_info = llm_advice.get_static_treatment(crop, disease_name, "en")
+            advice_text = ""
+            if static_info:
+                st.markdown(static_info["explanation"])
+                st.markdown("**Symptoms:**")
+                for s in static_info["symptoms"]:
+                    st.markdown(f"- {s}")
+                st.markdown("**Treatment:**")
+                for t in static_info["treatment"]:
+                    st.markdown(f"- {t}")
+                st.markdown("**Prevention:**")
+                for p in static_info["prevention"]:
+                    st.markdown(f"- {p}")
+                advice_text = " ".join([static_info["explanation"], *static_info["treatment"]])
+            else:
+                st.info("No stored recommendations for this disease.")
+
+            # Optional AI follow-up questions (Gemini free tier)
+            chat_key = f"chat_{crop}"
+            question = st.text_input("Ask a follow-up question about this diagnosis", key=f"q_{crop}")
+            if st.button("Ask the agronomist AI", type="primary") and question:
                 with st.spinner("Consulting agronomist AI..."):
-                    st.session_state[llm_key] = obtener_tratamiento_llm(disease_name, crop)
+                    st.session_state[chat_key] = llm_advice.ask_followup(crop, disease_name, question, "en")
 
-            if llm_key in st.session_state:
-                st.info(st.session_state[llm_key])
+            if chat_key in st.session_state:
+                resp = st.session_state[chat_key]
+                if resp.get("answer"):
+                    st.info(resp["answer"])
+                    advice_text = resp["answer"]
+                else:
+                    st.warning(resp.get("note", "AI unavailable."))
 
-                if _gtts_available:
-                    if st.button("Listen (TTS)"):
-                        with st.spinner("Generating audio..."):
-                            audio_buffer = generar_audio_gtts(st.session_state[llm_key])
-                        if audio_buffer:
-                            st.audio(audio_buffer, format="audio/mp3")
+            if _gtts_available and advice_text:
+                if st.button("Listen (TTS)"):
+                    with st.spinner("Generating audio..."):
+                        audio_buffer = generar_audio_gtts(advice_text)
+                    if audio_buffer:
+                        st.audio(audio_buffer, format="audio/mp3")
 
 st.markdown("---")
 st.caption("CropGuard - Samsung Innovation Campus Capstone Project")

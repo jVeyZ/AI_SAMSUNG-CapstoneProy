@@ -1,0 +1,12 @@
+torch
+torchvision
+streamlit
+scikit-learn
+matplotlib
+pillow
+kagglehub
+fastapi
+uvicorn[standard]
+python-multipart
+google-genai
+gtts
