@@ -4,6 +4,7 @@ data/
 _hlinktest/
 __pycache__/
 .pytest_cache/
+.idea/
 
 # Android / Gradle build artifacts
 android/.gradle/
