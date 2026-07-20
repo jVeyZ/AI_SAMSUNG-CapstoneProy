@@ -12,7 +12,7 @@ from cropguard.crop_config import CROP_CLASSES, get_disease_name, get_num_classe
 from cropguard.model_def import build_model, model_path, EVAL_TRANSFORM
 import cropguard.llm_advice as llm_advice
 
-WORK_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # ---- TTS (graceful degradation if package missing) -----------------------
 _gtts_available = True

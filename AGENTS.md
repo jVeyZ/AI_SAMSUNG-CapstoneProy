@@ -15,11 +15,10 @@ src/cropguard/          # core Python package
   treatments.json       # static treatment advice: 25 diseases × 3 languages (en/es/va)
   llm_advice.py         # get_static_treatment() + ask_followup() (Gemini free tier)
   server.py             # FastAPI backend (health/crops/predict/treatment/chat)
-
-app.py                  # Streamlit web app entry point
-train.py                # two-phase fine-tuning per crop
-predict_worker.py       # CLI inference: python predict_worker.py <image> <Crop>
-setup.py                # dataset download/setup
+  app.py                # Streamlit web app entry point
+  train.py              # two-phase fine-tuning per crop
+  predict_worker.py     # CLI inference
+  setup.py              # dataset download/setup
 
 android/                # Kotlin + Jetpack Compose app (Material 3)
 tests/                  # pytest unit + e2e tests
@@ -33,20 +32,20 @@ docs/                   # Samsung capstone templates and dataset links
 ## Commands (run in this order)
 
 ```
-python setup.py          # download datasets → data/<crop>/   [--tomato --rice --orange --force]
-python train.py          # fine-tune all crops → models/      [--crop rice --epochs 25 --head-epochs 8 --ft-lr 1e-4 --batch-size 32 --workers 4 --no-early-stop --no-weights]
-streamlit run app.py     # launch web app
+python -m cropguard.setup          # download datasets → data/<crop>/   [--tomato --rice --orange --force]
+python -m cropguard.train          # fine-tune all crops → models/      [--crop rice --epochs 25 --head-epochs 8 --ft-lr 1e-4 --batch-size 32 --workers 4 --no-early-stop --no-weights]
+streamlit run src/cropguard/app.py # launch web app
 uvicorn cropguard.server:app --port 8000   # launch backend API for the Android app
 python -m pytest tests/unit tests/e2e   # run test suites
 android\gradlew.bat -p android testDebugUnitTest assembleDebug   # Android tests + APK (needs JDK 17, see below)
 ```
 
 - `setup.py` uses `kagglehub` (needs Kaggle API credentials in `~/.kaggle/kaggle.json`); rice download is ~780 MB.
-- **Orange cannot be auto-downloaded** (Cloudflare blocks Mendeley): download https://data.mendeley.com/datasets/6szsnpypdd/1 manually, save as `orange_dataset.zip` in the repo root, then rerun `python setup.py --orange`.
+- **Orange cannot be auto-downloaded** (Cloudflare blocks Mendeley): download https://data.mendeley.com/datasets/6szsnpypdd/1 manually, save as `orange_dataset.zip` in the repo root, then rerun `python -m cropguard.setup --orange`.
 - `train.py` skips crops whose data dir is missing. Per crop it runs two phases: head warmup (backbone frozen) then fine-tuning (layer4 unfrozen, head LR = 10× `--ft-lr`). It checkpoints the best weights to `model_path(crop)` on every val improvement, so an interrupted run still leaves a usable model — but figures/JSON are only written on completion.
 - `train.py` writes per-crop figures to `results/<crop>/` (`history.png` with fine-tune boundary, `confusion_matrix.png`, `confusion_matrix_normalized.png`, `class_metrics.png`, `confidence_histogram.png`, `misclassified_samples.png`, `class_distribution.png`) and enriches `results/training_results.json` with `top2_accuracy`, `macro_f1`, `weighted_f1`, `per_class` metrics, `head_epochs_ran`, `epochs_ran`, `best_epoch`, `finetuned`, `unfrozen`.
 - Deps in `requirements.txt` (+ `requirements-dev.txt` for tests). CI installs CPU-only torch wheels (`--index-url https://download.pytorch.org/whl/cpu`) — do the same on Linux CI-like envs.
-- Smoke checks: `python predict_worker.py <image> <Crop>` prints a JSON prediction to stdout. For UI changes: `AppTest.from_file("app.py")` from `streamlit.testing.v1` runs the script headlessly.
+- Smoke checks: `python -m cropguard.predict_worker <image> <Crop>` prints a JSON prediction to stdout. For UI changes: `AppTest.from_file("src/cropguard/app.py")` from `streamlit.testing.v1` runs the script headlessly.
 - CI: `.github/workflows/ci.yml` — job `python` (pytest unit + e2e) and job `android` (gradle tests + assembleDebug). No real models/data/API keys in CI: tests build random-weight models into a temp dir and exercise the Gemini fallback path.
 
 ## Environment

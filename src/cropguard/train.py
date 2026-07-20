@@ -39,9 +39,9 @@ from cropguard.model_def import (build_model, model_path, TRAIN_TRANSFORM, EVAL_
 
 CROP_DATA = get_crop_data()
 
-WORK_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(WORK_DIR, "data")
-RESULTS_DIR = os.path.join(WORK_DIR, "results")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(REPO_ROOT, "data")
+RESULTS_DIR = os.path.join(REPO_ROOT, "results")
 RESULTS_FILE = os.path.join(RESULTS_DIR, "training_results.json")
 
 RANDOM_STATE = 42
