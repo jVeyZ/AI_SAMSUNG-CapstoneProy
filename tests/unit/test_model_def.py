@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from PIL import Image
 
-from model_def import (EVAL_TRANSFORM, TRAIN_TRANSFORM, build_model, model_path)
+from cropguard.model_def import (EVAL_TRANSFORM, TRAIN_TRANSFORM, build_model, model_path)
 
 
 def test_fc_head_structure():

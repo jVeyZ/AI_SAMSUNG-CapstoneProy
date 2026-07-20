@@ -1,14 +1,15 @@
 """Unit tests for treatments.json — static advice completeness in all languages."""
 import json, os
 
-from crop_config import CROP_CLASSES
-import llm_advice
+from cropguard.crop_config import CROP_CLASSES
+import cropguard.llm_advice as llm_advice
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_TREATMENTS_PATH = os.path.join(REPO_ROOT, "src", "cropguard", "treatments.json")
 
 
 def _load():
-    with open(os.path.join(REPO_ROOT, "treatments.json"), encoding="utf-8") as f:
+    with open(_TREATMENTS_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 

@@ -8,9 +8,9 @@ import streamlit as st
 import numpy as np
 import torch
 from PIL import Image
-from crop_config import CROP_CLASSES, get_disease_name, get_num_classes
-from model_def import build_model, model_path, EVAL_TRANSFORM
-import llm_advice
+from cropguard.crop_config import CROP_CLASSES, get_disease_name, get_num_classes
+from cropguard.model_def import build_model, model_path, EVAL_TRANSFORM
+import cropguard.llm_advice as llm_advice
 
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 

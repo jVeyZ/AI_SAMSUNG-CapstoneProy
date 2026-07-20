@@ -8,9 +8,9 @@ import os, sys, json, traceback
 
 image_path = sys.argv[1]
 crop = sys.argv[2] if len(sys.argv) > 2 else "Tomato"
+from cropguard.crop_config import get_disease_name, get_num_classes
 
-from crop_config import get_disease_name, get_num_classes
-from model_def import build_model, model_path, EVAL_TRANSFORM
+from cropguard.model_def import build_model, model_path, EVAL_TRANSFORM
 
 try:
     import torch

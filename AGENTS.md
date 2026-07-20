@@ -6,12 +6,27 @@ Multi-crop leaf-disease classifier (Samsung Innovation Campus capstone). Pure-to
 image → ResNet50 (ImageNet-normalized input, layer4 fine-tuned, fc = MLP head 2048→256→128→classes) → softmax → class index → display name
 ```
 
-- `crop_config.py` — single source of truth: `CROP_CLASSES` display names; `class_to_dirname()` maps display name → data-dir name.
-- `model_def.py` — shared contract between training and inference: `build_model(num_classes)` (ResNet50 + MLP head in `fc`), `TRAIN_TRANSFORM`/`EVAL_TRANSFORM` (include ImageNet mean/std normalization — required, the pretrained backbone is off-distribution without it), `model_path(crop)`. Change the head architecture ONLY here.
-- `treatments.json` — static treatment advice (explanation/symptoms/treatment/prevention) for all 25 diseases × 3 languages (`en`/`es`/`va`). This is the DEFAULT advice everywhere.
-- `llm_advice.py` — shared helper: `get_static_treatment()` + `ask_followup()` (Gemini free tier, `gemini-2.0-flash`, env var `GEMINI_API_KEY`, google-genai package). AI answers use the static content as grounding context; without a key it returns the static fallback, never an error.
-- `server.py` — FastAPI backend for the Android app: `GET /health`, `GET /crops`, `POST /predict` (multipart), `GET /treatment/{crop}/{disease}?lang=`, `POST /chat`. Models load lazily per crop on CPU; `CROPGUARD_MODELS_DIR` env var overrides the models dir (tests inject random-weight models).
-- `android/` — Kotlin + Jetpack Compose app (Material 3). Talks to `server.py`; i18n EN/ES/Valencian via an in-memory dictionary (deliberately NOT res/values-XX — locale recreation would wipe ViewModel state).
+## Repository layout
+
+```
+src/cropguard/          # core Python package
+  crop_config.py        # single source of truth: CROP_CLASSES display names; class_to_dirname()
+  model_def.py          # build_model(), TRAIN_TRANSFORM/EVAL_TRANSFORM, model_path()
+  treatments.json       # static treatment advice: 25 diseases × 3 languages (en/es/va)
+  llm_advice.py         # get_static_treatment() + ask_followup() (Gemini free tier)
+  server.py             # FastAPI backend (health/crops/predict/treatment/chat)
+
+app.py                  # Streamlit web app entry point
+train.py                # two-phase fine-tuning per crop
+predict_worker.py       # CLI inference: python predict_worker.py <image> <Crop>
+setup.py                # dataset download/setup
+
+android/                # Kotlin + Jetpack Compose app (Material 3)
+tests/                  # pytest unit + e2e tests
+scripts/                # helper scripts (Kanban bootstrap)
+docs/                   # Samsung capstone templates and dataset links
+```
+
 - `data/`, `models/`, `results/` are gitignored — a fresh clone has no datasets or models; regenerate with the commands below.
 - Models: `models/cropguard_<crop>_model.pth` — full fine-tuned state dict (backbone + head), ~92 MB per crop.
 
@@ -21,7 +36,7 @@ image → ResNet50 (ImageNet-normalized input, layer4 fine-tuned, fc = MLP head 
 python setup.py          # download datasets → data/<crop>/   [--tomato --rice --orange --force]
 python train.py          # fine-tune all crops → models/      [--crop rice --epochs 25 --head-epochs 8 --ft-lr 1e-4 --batch-size 32 --workers 4 --no-early-stop --no-weights]
 streamlit run app.py     # launch web app
-uvicorn server:app --port 8000   # launch backend API for the Android app
+uvicorn cropguard.server:app --port 8000   # launch backend API for the Android app
 python -m pytest tests/unit tests/e2e   # run test suites
 android\gradlew.bat -p android testDebugUnitTest assembleDebug   # Android tests + APK (needs JDK 17, see below)
 ```
@@ -54,6 +69,5 @@ android\gradlew.bat -p android testDebugUnitTest assembleDebug   # Android tests
 
 ## Don't-touch quirks
 
-- `save_model.py` is legacy tomato-only code superseded by `train.py`: it hardcodes `.cuda()` (crashes without GPU), requires Keras (no longer a project dep), and writes obsolete artifacts (`cropguard_model.keras`, flat-schema `results/training_results.json`). Don't run it.
 - In `train.py`, train and val/test come from two separate `ImageFolder` instances split with the same seeded generator — keep the seeds identical or the splits diverge.
 - `train.py`'s driver is wrapped in `main()` + `if __name__ == "__main__"` guard — required on Windows so `num_workers > 0` DataLoader processes don't re-run training on spawn. Don't move driver code back to module top level.

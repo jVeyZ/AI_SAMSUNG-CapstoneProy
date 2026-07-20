@@ -32,9 +32,9 @@ from torch.utils.data import DataLoader
 from torchvision import datasets
 from sklearn.metrics import classification_report, confusion_matrix, top_k_accuracy_score
 from sklearn.utils.class_weight import compute_class_weight
+from cropguard.crop_config import CROP_CLASSES, get_crop_data
 
-from crop_config import CROP_CLASSES, get_crop_data
-from model_def import (build_model, model_path, TRAIN_TRANSFORM, EVAL_TRANSFORM,
+from cropguard.model_def import (build_model, model_path, TRAIN_TRANSFORM, EVAL_TRANSFORM,
                        MODELS_DIR)
 
 CROP_DATA = get_crop_data()

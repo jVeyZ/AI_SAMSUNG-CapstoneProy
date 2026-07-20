@@ -19,16 +19,16 @@ from PIL import Image
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from cropguard.crop_config import CROP_CLASSES, get_num_classes, get_disease_name
 
-from crop_config import CROP_CLASSES, get_num_classes, get_disease_name
-from model_def import build_model, EVAL_TRANSFORM
-import llm_advice
+from cropguard.model_def import build_model, EVAL_TRANSFORM
 
-WORK_DIR = os.path.dirname(os.path.abspath(__file__))
+import cropguard.llm_advice as llm_advice
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def _models_dir():
-    return os.environ.get("CROPGUARD_MODELS_DIR", os.path.join(WORK_DIR, "models"))
+    return os.environ.get("CROPGUARD_MODELS_DIR", os.path.join(_REPO_ROOT, "models"))
 
 
 app = FastAPI(title="CropGuard API", version="1.0.0")

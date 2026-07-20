@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from crop_config import (CROP_CLASSES, CROP_DATA_DIRS, class_to_dirname,
+from cropguard.crop_config import (CROP_CLASSES, CROP_DATA_DIRS, class_to_dirname,
                          get_crop_data, get_disease_name, get_num_classes)
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -11,8 +11,8 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 
-WORK_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(WORK_DIR, "models")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+MODELS_DIR = os.environ.get("CROPGUARD_MODELS_DIR", os.path.join(REPO_ROOT, "models"))
 
 IMG_SIZE = (224, 224)
 # Pretrained ResNet50 expects ImageNet-normalized inputs — do not remove.

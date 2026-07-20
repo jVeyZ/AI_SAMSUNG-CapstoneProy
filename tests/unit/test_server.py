@@ -4,17 +4,17 @@ import os
 import pytest
 from fastapi.testclient import TestClient
 
-from crop_config import CROP_CLASSES
+from cropguard.crop_config import CROP_CLASSES
 
 
 @pytest.fixture(scope="module")
 def client(random_models_dir):
     os.environ["CROPGUARD_MODELS_DIR"] = random_models_dir
     os.environ.pop("GEMINI_API_KEY", None)  # force the AI-unavailable fallback path
-    import llm_advice
+    import cropguard.llm_advice as llm_advice
     llm_advice._gemini_client = None  # ensure cached client is not used
 
-    import server
+    import cropguard.server as server
     server._models.clear()
     with TestClient(server.app) as c:
         yield c

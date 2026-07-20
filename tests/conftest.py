@@ -3,7 +3,7 @@ import os, sys
 import pytest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, REPO_ROOT)
+sys.path.insert(0, os.path.join(REPO_ROOT, "src"))
 
 
 @pytest.fixture(scope="session")
@@ -14,8 +14,8 @@ def random_models_dir(tmp_path_factory):
     (which are gitignored and unavailable in CI).
     """
     import torch
-    from crop_config import CROP_CLASSES, get_num_classes
-    from model_def import build_model
+    from cropguard.crop_config import CROP_CLASSES, get_num_classes
+    from cropguard.model_def import build_model
 
     d = tmp_path_factory.mktemp("models")
     for crop in CROP_CLASSES:

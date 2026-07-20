@@ -13,8 +13,10 @@ def live_server(random_models_dir):
     env = dict(os.environ)
     env["CROPGUARD_MODELS_DIR"] = random_models_dir
     env.pop("GEMINI_API_KEY", None)  # exercise the graceful AI fallback
+    src_dir = os.path.join(REPO_ROOT, "src")
+    env["PYTHONPATH"] = src_dir + os.pathsep + env.get("PYTHONPATH", "")
     proc = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "server:app", "--host", "127.0.0.1", "--port", "8123"],
+        [sys.executable, "-m", "uvicorn", "cropguard.server:app", "--host", "127.0.0.1", "--port", "8123"],
         cwd=REPO_ROOT, env=env,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
     )
