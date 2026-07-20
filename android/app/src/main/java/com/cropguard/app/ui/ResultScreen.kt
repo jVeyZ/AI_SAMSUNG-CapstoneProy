@@ -29,12 +29,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cropguard.app.data.PredictResponse
+import com.cropguard.app.data.TreatmentResponse
+import com.cropguard.app.ui.theme.CropGuardTheme
+import com.cropguard.app.vm.ChatMessage
 import com.cropguard.app.vm.CropViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,6 +142,70 @@ fun ResultScreen(vm: CropViewModel, onBack: () -> Unit) {
                         enabled = !state.loading && question.isNotBlank(),
                     ) {
                         Icon(Icons.AutoMirrored.Filled.Send, contentDescription = L.t("ask_ai", state.lang))
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ---- Preview -----------------------------------------------------------------
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, name = "Result Screen")
+@Composable
+private fun PreviewResultScreen() {
+    val pred = PredictResponse(crop = "Tomato", disease = "Early Blight", confidence = 0.93f, probabilities = emptyMap())
+    val treat = TreatmentResponse(
+        crop = "Tomato", disease = "Early Blight", lang = "en",
+        explanation = "Early Blight is caused by the fungus Alternaria solani.",
+        symptoms = listOf("Dark concentric rings on older leaves", "Yellow halos around lesions", "Premature leaf drop"),
+        treatment = listOf("Remove infected leaves", "Apply chlorothalonil fungicide", "Improve air circulation"),
+        prevention = listOf("Rotate crops every 2-3 years", "Mulch around base of plants", "Water at soil level"),
+    )
+    val chat = listOf(
+        ChatMessage("Can I still eat the fruit?", "Yes, affected fruit is safe to eat. Just cut away the damaged parts.", null),
+    )
+
+    CropGuardTheme {
+        Scaffold(
+            topBar = { TopAppBar(title = { Text("Diagnosis Result") }, navigationIcon = {
+                IconButton(onClick = {}) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null) }
+            }) }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item {
+                    Card(shape = RoundedCornerShape(24.dp), modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Text("Early Blight", style = MaterialTheme.typography.headlineMedium)
+                            Text("Tomato", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.outline)
+                            LinearProgressIndicator(progress = { 0.93f }, modifier = Modifier.fillMaxWidth().height(8.dp), strokeCap = ProgressIndicatorDefaults.LinearStrokeCap)
+                            Text("93% Confidence", style = MaterialTheme.typography.labelLarge)
+                        }
+                    }
+                }
+                item {
+                    TreatmentCard(
+                        title = "Treatment Advice",
+                        explanation = treat.explanation,
+                        sections = listOf(
+                            "Symptoms" to treat.symptoms,
+                            "Treatment" to treat.treatment,
+                            "Prevention" to treat.prevention,
+                        ),
+                    )
+                }
+                items(chat.size) { i -> ChatBubble(chat[i], "en") }
+                item {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedTextField(value = "", onValueChange = {}, placeholder = { Text("Ask a follow-up question...") }, modifier = Modifier.weight(1f), shape = RoundedCornerShape(24.dp))
+                        IconButton(onClick = {}, enabled = false) { Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send") }
                     }
                 }
             }

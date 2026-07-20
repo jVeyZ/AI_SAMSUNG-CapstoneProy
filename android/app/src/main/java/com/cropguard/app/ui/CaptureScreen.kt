@@ -42,9 +42,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
+import com.cropguard.app.ui.theme.CropGuardTheme
 import com.cropguard.app.vm.CropViewModel
 import java.io.File
 
@@ -172,6 +174,86 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit) {
                     Icon(Icons.Default.Search, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
                     Text(L.t("analyze", state.lang))
+                }
+            }
+        }
+    }
+}
+
+// ---- Preview -----------------------------------------------------------------
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, name = "Capture Screen")
+@Composable
+private fun PreviewCaptureScreen() {
+    CropGuardTheme {
+        Scaffold(
+            topBar = { TopAppBar(title = { Text("CropGuard") }) }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Text("Select crop", style = MaterialTheme.typography.titleMedium)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf("Tomato", "Rice", "Orange").forEach { crop ->
+                        FilterChip(
+                            selected = crop == "Tomato",
+                            onClick = {},
+                            label = { Text(crop) },
+                        )
+                    }
+                }
+
+                Card(
+                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                Icons.Default.AddPhotoAlternate,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.outline,
+                            )
+                            Text(
+                                "Pick or take a photo first",
+                                color = MaterialTheme.colorScheme.outline,
+                            )
+                        }
+                    }
+                }
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = {}, modifier = Modifier.weight(1f)) {
+                        Icon(Icons.Default.PhotoLibrary, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Gallery")
+                    }
+                    OutlinedButton(onClick = {}, modifier = Modifier.weight(1f)) {
+                        Icon(Icons.Default.PhotoCamera, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Camera")
+                    }
+                }
+
+                Button(
+                    onClick = {},
+                    enabled = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    Icon(Icons.Default.Search, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Analyze")
                 }
             }
         }

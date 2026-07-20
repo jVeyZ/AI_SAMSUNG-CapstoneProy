@@ -27,7 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cropguard.app.ui.theme.CropGuardTheme
 import com.cropguard.app.vm.ChatMessage
 import com.cropguard.app.vm.CropViewModel
 
@@ -110,5 +112,53 @@ fun ChatBubble(msg: ChatMessage, lang: String) {
                 }
             }
         }
+    }
+}
+
+// ---- Previews ---------------------------------------------------------------
+
+@Preview(showBackground = true, name = "Treatment Card")
+@Composable
+private fun PreviewTreatmentCard() {
+    CropGuardTheme {
+        TreatmentCard(
+            title = "Treatment Advice",
+            explanation = "Bacterial Leaf Blight is caused by Xanthomonas oryzae. It causes water-soaked lesions that turn yellow and then dry.",
+            sections = listOf(
+                "Symptoms" to listOf("Water-soaked lesions on leaves", "Yellowing from leaf tips", "Bacterial ooze on leaf surface"),
+                "Treatment" to listOf("Remove infected plants", "Apply copper-based bactericide", "Use resistant varieties"),
+                "Prevention" to listOf("Use certified seeds", "Avoid overhead irrigation", "Maintain field sanitation"),
+            ),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Chat Bubble")
+@Composable
+private fun PreviewChatBubble() {
+    CropGuardTheme {
+        ChatBubble(
+            msg = ChatMessage(
+                question = "Can I use copper spray on this?",
+                answer = "Yes, copper-based bactericides are effective. Apply every 7-10 days during wet conditions.",
+                note = null,
+            ),
+            lang = "en",
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Chat Bubble (fallback)")
+@Composable
+private fun PreviewChatBubbleFallback() {
+    CropGuardTheme {
+        ChatBubble(
+            msg = ChatMessage(
+                question = "How do I prevent this?",
+                answer = null,
+                note = "AI unavailable — showing stored recommendations.",
+            ),
+            lang = "en",
+        )
     }
 }
