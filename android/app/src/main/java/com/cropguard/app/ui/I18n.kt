@@ -14,7 +14,8 @@ object L {
         STRINGS[lang]?.get(key) ?: STRINGS["en"]!!.getValue(key)
 
     fun t(key: String, lang: String, crop: String): String {
-        val cropKey = "${key}_${crop.lowercase()}"
+        val part = cropPart(crop)
+        val cropKey = "${key}_$part"
         return STRINGS[lang]?.get(cropKey) ?: STRINGS["en"]?.get(cropKey)
             ?: t(key, lang)
     }
