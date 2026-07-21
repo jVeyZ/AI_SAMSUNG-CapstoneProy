@@ -251,7 +251,18 @@ fun ChatBubble(msg: ChatMessage, lang: String) {
                         TypingIndicator()
                     } else {
                         val answerText = msg.answer ?: msg.note ?: L.t("ai_unavailable", lang)
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            msg.provider?.let { name ->
+                                Text(
+                                    name,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.weight(1f),
+                                )
+                            } ?: Spacer(Modifier.weight(1f))
                             TtsButton(text = answerText, lang = lang)
                         }
                         Text(
@@ -292,6 +303,7 @@ private fun PreviewChatBubble() {
                 question = "Can I use copper spray on this?",
                 answer = "Yes, **copper-based bactericides** are effective. Apply every **7-10 days** during wet conditions.",
                 note = null,
+                provider = "OpenCode",
             ),
             lang = "en",
         )

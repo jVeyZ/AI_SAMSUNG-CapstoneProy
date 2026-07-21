@@ -20,6 +20,7 @@ data class ChatMessage(
     val answer: String?,
     val note: String?,
     val isLoading: Boolean = false,
+    val provider: String? = null,
 )
 
 data class UiState(
@@ -114,7 +115,8 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
         val s = _state.value
         val pred = s.prediction ?: return
         if (question.isBlank()) return
-        val loadingMsg = ChatMessage(question, answer = null, note = null, isLoading = true)
+        val providerName = providerDisplayName(s.aiProvider)
+        val loadingMsg = ChatMessage(question, answer = null, note = null, isLoading = true, provider = providerName)
         _state.value = s.copy(chat = s.chat + loadingMsg)
         viewModelScope.launch {
             try {
@@ -126,17 +128,25 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
                 val current = _state.value.chat.toMutableList()
                 val idx = current.indexOfLast { it.isLoading }
                 if (idx >= 0) {
-                    current[idx] = ChatMessage(question, resp.answer, resp.note)
+                    current[idx] = ChatMessage(question, resp.answer, resp.note, provider = providerName)
                 }
                 _state.value = _state.value.copy(chat = current)
             } catch (e: Exception) {
                 val current = _state.value.chat.toMutableList()
                 val idx = current.indexOfLast { it.isLoading }
                 if (idx >= 0) {
-                    current[idx] = ChatMessage(question, answer = null, note = "Network error")
+                    current[idx] = ChatMessage(question, answer = null, note = "Network error", provider = providerName)
                 }
                 _state.value = _state.value.copy(chat = current, errorNetwork = true)
             }
+        }
+    }
+
+    companion object {
+        private fun providerDisplayName(provider: String): String = when (provider) {
+            "gemini" -> "Gemini"
+            "opencode" -> "OpenCode"
+            else -> provider
         }
     }
 }
