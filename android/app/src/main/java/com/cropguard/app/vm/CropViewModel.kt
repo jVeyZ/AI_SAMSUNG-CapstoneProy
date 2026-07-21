@@ -88,10 +88,16 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
         val s = _state.value
         val bytes = s.imageBytes ?: return
         _state.value = s.copy(loading = true, errorNetwork = false)
+        val ext = when (s.imageMime) {
+            "image/png" -> "png"
+            "image/bmp" -> "bmp"
+            "image/webp" -> "webp"
+            else -> "jpg"
+        }
         viewModelScope.launch {
             try {
                 val filePart = MultipartBody.Part.createFormData(
-                    "file", "leaf.jpg", bytes.toRequestBody(s.imageMime.toMediaType()))
+                    "file", "leaf.$ext", bytes.toRequestBody(s.imageMime.toMediaType()))
                 val cropPart = s.selectedCrop.toRequestBody("text/plain".toMediaType())
                 val pred = ApiClient.api.predict(filePart, cropPart)
                 val treat = runCatching {
