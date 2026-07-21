@@ -27,7 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cropguard.app.ui.theme.CropGuardTheme
@@ -94,6 +98,18 @@ fun TreatmentCard(
     }
 }
 
+/** Parse **bold** markers into an AnnotatedString with bold spans. */
+fun parseBasicMarkdown(text: String): AnnotatedString = buildAnnotatedString {
+    val regex = Regex("""\*\*(.+?)\*\*""")
+    var lastEnd = 0
+    for (match in regex.findAll(text)) {
+        append(text.substring(lastEnd, match.range.first))
+        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(match.groupValues[1]) }
+        lastEnd = match.range.last + 1
+    }
+    append(text.substring(lastEnd))
+}
+
 @Composable
 fun ChatBubble(msg: ChatMessage, lang: String) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -113,8 +129,9 @@ fun ChatBubble(msg: ChatMessage, lang: String) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
             Card(shape = RoundedCornerShape(18.dp)) {
                 Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
+                    val answerText = msg.answer ?: msg.note ?: L.t("ai_unavailable", lang)
                     Text(
-                        msg.answer ?: msg.note ?: L.t("ai_unavailable", lang),
+                        parseBasicMarkdown(answerText),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -148,7 +165,7 @@ private fun PreviewChatBubble() {
         ChatBubble(
             msg = ChatMessage(
                 question = "Can I use copper spray on this?",
-                answer = "Yes, copper-based bactericides are effective. Apply every 7-10 days during wet conditions.",
+                answer = "Yes, **copper-based bactericides** are effective. Apply every **7-10 days** during wet conditions.",
                 note = null,
             ),
             lang = "en",

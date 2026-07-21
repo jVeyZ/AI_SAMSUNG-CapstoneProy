@@ -58,10 +58,11 @@ def test_full_diagnosis_flow(live_server, tiny_image_bytes):
     assert r.status_code == 200
     assert r.json()["explanation"].strip()
 
-    # 4. Ask a follow-up question — no key in this env, so we get the graceful fallback
+    # 4. Ask a follow-up question — use invalid provider to force graceful fallback
     r = httpx.post(f"{live_server}/chat", json={
         "crop": "Rice", "disease": disease,
-        "question": "Què puc fer ara mateix?", "lang": "va"}, timeout=30)
+        "question": "Què puc fer ara mateix?", "lang": "va",
+        "provider": "__test_only__"}, timeout=30)
     assert r.status_code == 200
     body = r.json()
     assert body["answer"] is None
