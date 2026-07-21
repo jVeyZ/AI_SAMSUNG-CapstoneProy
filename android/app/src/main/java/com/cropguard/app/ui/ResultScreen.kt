@@ -1,6 +1,10 @@
 package com.cropguard.app.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +26,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -40,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cropguard.app.data.PredictResponse
@@ -78,6 +85,7 @@ fun ResultScreen(vm: CropViewModel, onBack: () -> Unit, onSettings: () -> Unit =
             return@Scaffold
         }
 
+        var showAllClasses by remember { mutableStateOf(false) }
         val listState = rememberLazyListState()
 
         LaunchedEffect(state.chat.size) {
@@ -119,6 +127,57 @@ fun ResultScreen(vm: CropViewModel, onBack: () -> Unit, onSettings: () -> Unit =
                             "${(pred.confidence * 100).toInt()}% ${L.t("confidence", state.lang)}",
                             style = MaterialTheme.typography.labelLarge,
                         )
+
+                        if (pred.probabilities.size > 1) {
+                            HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
+                            Text(
+                                if (showAllClasses) L.t("hide_classes", state.lang)
+                                else L.t("show_all_classes", state.lang),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .clickable { showAllClasses = !showAllClasses }
+                                    .padding(top = 4.dp),
+                            )
+                            AnimatedVisibility(
+                                visible = showAllClasses,
+                                enter = expandVertically(),
+                                exit = shrinkVertically(),
+                            ) {
+                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    pred.probabilities.entries
+                                        .sortedByDescending { it.value }
+                                        .forEach { (name, prob) ->
+                                            val animatedProb by animateFloatAsState(
+                                                targetValue = prob, label = "prob_$name")
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.fillMaxWidth(),
+                                            ) {
+                                                Text(
+                                                    L.disease(pred.crop, name, state.lang),
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    modifier = Modifier.weight(1f),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                                Text(
+                                                    "${(prob * 100).toInt()}%",
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    modifier = Modifier.width(40.dp),
+                                                )
+                                                LinearProgressIndicator(
+                                                    progress = { animatedProb },
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .height(6.dp),
+                                                    strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+                                                )
+                                            }
+                                        }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -173,7 +232,14 @@ fun ResultScreen(vm: CropViewModel, onBack: () -> Unit, onSettings: () -> Unit =
 @Preview(showBackground = true, name = "Result Screen")
 @Composable
 private fun PreviewResultScreen() {
-    val pred = PredictResponse(crop = "Tomato", disease = "Early Blight", confidence = 0.93f, probabilities = emptyMap())
+    val pred = PredictResponse(
+        crop = "Tomato", disease = "Early Blight", confidence = 0.93f,
+        probabilities = mapOf(
+            "Early Blight" to 0.93f, "Late Blight" to 0.03f,
+            "Bacterial Spot" to 0.02f, "Healthy" to 0.01f,
+            "Leaf Mold" to 0.005f, "Mosaic Virus" to 0.005f,
+        ),
+    )
     val treat = TreatmentResponse(
         crop = "Tomato", disease = "Early Blight", lang = "en",
         explanation = "Early Blight is caused by the fungus Alternaria solani.",
@@ -193,6 +259,8 @@ private fun PreviewResultScreen() {
                 SettingsButton(onClick = {}, lang = "en")
             }) }
         ) { padding ->
+            var showAllClasses by remember { mutableStateOf(false) }
+
             LazyColumn(
                 modifier = Modifier
                     .padding(padding)
@@ -207,6 +275,24 @@ private fun PreviewResultScreen() {
                             Text(L.cropName("Tomato", "en"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.outline)
                             LinearProgressIndicator(progress = { 0.93f }, modifier = Modifier.fillMaxWidth().height(8.dp), strokeCap = ProgressIndicatorDefaults.LinearStrokeCap)
                             Text("93% Confidence", style = MaterialTheme.typography.labelLarge)
+                            HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
+                            Text(
+                                if (showAllClasses) "Hide classes" else "Show all classes",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.clickable { showAllClasses = !showAllClasses }.padding(top = 4.dp),
+                            )
+                            AnimatedVisibility(visible = showAllClasses, enter = expandVertically(), exit = shrinkVertically()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    pred.probabilities.entries.sortedByDescending { it.value }.forEach { (name, prob) ->
+                                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                                            Text(name, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                            Text("${(prob * 100).toInt()}%", style = MaterialTheme.typography.labelSmall, modifier = Modifier.width(40.dp))
+                                            LinearProgressIndicator(progress = { prob }, modifier = Modifier.weight(1f).height(6.dp), strokeCap = ProgressIndicatorDefaults.LinearStrokeCap)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

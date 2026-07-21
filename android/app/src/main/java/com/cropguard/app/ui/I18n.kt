@@ -72,6 +72,8 @@ object L {
         "server_url_desc" to "IP address and port of the CropGuard backend server.",
         "save" to "Save",
         "saved" to "Saved",
+        "show_all_classes" to "Show all classes",
+        "hide_classes" to "Hide classes",
     )
 
     private val UI_ES = mapOf(
@@ -111,6 +113,8 @@ object L {
         "server_url_desc" to "Dirección IP y puerto del servidor backend de CropGuard.",
         "save" to "Guardar",
         "saved" to "Guardado",
+        "show_all_classes" to "Mostrar todas las clases",
+        "hide_classes" to "Ocultar clases",
     )
 
     private val UI_VA = mapOf(
@@ -150,6 +154,8 @@ object L {
         "server_url_desc" to "Adreça IP i port del servidor backend de CropGuard.",
         "save" to "Guarda",
         "saved" to "Guardat",
+        "show_all_classes" to "Mostrar totes les classes",
+        "hide_classes" to "Amagar classes",
     )
 
     private val DISEASES_EN = mapOf(
