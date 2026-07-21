@@ -77,10 +77,14 @@ def test_predict_bad_image(client):
     assert r.status_code == 400
 
 
-def test_chat_fallback_without_key(client):
+def test_chat_fallback_without_key(client, monkeypatch):
+    import cropguard.llm_advice as _llm
+    def _fake_opencode(crop, disease, question, lang):
+        raise RuntimeError("No API key")
+    monkeypatch.setattr(_llm, "_ask_opencode", _fake_opencode)
     r = client.post("/chat", json={
         "crop": "Tomato", "disease": "Late Blight",
-        "question": "Can I use copper?", "lang": "en"})
+        "question": "Can I use copper?", "lang": "en", "provider": "opencode"})
     assert r.status_code == 200
     body = r.json()
     assert body["answer"] is None
