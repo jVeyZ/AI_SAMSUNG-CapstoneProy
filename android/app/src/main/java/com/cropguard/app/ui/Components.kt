@@ -38,6 +38,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -105,13 +106,17 @@ fun TreatmentCard(
     }
 }
 
-/** Parse **bold** markers into an AnnotatedString with bold spans. */
+/** Parse **bold** and *italic* markers into an AnnotatedString. */
 fun parseBasicMarkdown(text: String): AnnotatedString = buildAnnotatedString {
-    val regex = Regex("""\*\*(.+?)\*\*""")
+    val regex = Regex("""\*\*(.+?)\*\*|\*(.+?)\*""")
     var lastEnd = 0
     for (match in regex.findAll(text)) {
         append(text.substring(lastEnd, match.range.first))
-        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(match.groupValues[1]) }
+        if (match.groupValues[1].isNotEmpty()) {
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(match.groupValues[1]) }
+        } else {
+            withStyle(SpanStyle(fontStyle = FontStyle.Italic)) { append(match.groupValues[2]) }
+        }
         lastEnd = match.range.last + 1
     }
     append(text.substring(lastEnd))
