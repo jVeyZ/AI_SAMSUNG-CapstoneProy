@@ -35,3 +35,16 @@ def tiny_image_bytes():
     buf = io.BytesIO()
     Image.fromarray(arr).save(buf, format="PNG")
     return buf.getvalue()
+
+
+@pytest.fixture(scope="session")
+def tiny_jpg_bytes():
+    """A small valid JPEG generated at runtime."""
+    import io
+    import numpy as np
+    from PIL import Image
+
+    arr = (np.random.RandomState(0).rand(96, 96, 3) * 255).astype("uint8")
+    buf = io.BytesIO()
+    Image.fromarray(arr).save(buf, format="JPEG")
+    return buf.getvalue()

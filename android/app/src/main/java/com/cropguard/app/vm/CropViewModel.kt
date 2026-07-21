@@ -90,8 +90,6 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
         _state.value = s.copy(loading = true, errorNetwork = false)
         val ext = when (s.imageMime) {
             "image/png" -> "png"
-            "image/bmp" -> "bmp"
-            "image/webp" -> "webp"
             else -> "jpg"
         }
         viewModelScope.launch {

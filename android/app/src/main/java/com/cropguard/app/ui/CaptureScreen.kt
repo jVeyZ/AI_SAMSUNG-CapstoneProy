@@ -57,7 +57,7 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit, onSettings: () -> Uni
     val ctx = LocalContext.current
     var cameraUri by remember { mutableStateOf<Uri?>(null) }
 
-    val ALLOWED_IMAGE_TYPES = setOf("image/jpeg", "image/png", "image/bmp", "image/webp")
+    val ALLOWED_IMAGE_TYPES = setOf("image/jpeg", "image/png")
 
     fun readUri(uri: Uri) {
         val mime = ctx.contentResolver.getType(uri) ?: "image/jpeg"
