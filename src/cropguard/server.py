@@ -111,6 +111,7 @@ class ChatRequest(BaseModel):
     disease: str = Field(..., examples=["Rice Blast"])
     question: str = Field(..., examples=["Can I use neem oil?"])
     lang: str = Field("en", examples=["en"])
+    provider: str | None = Field(None, examples=["opencode"], description="AI provider: gemini or opencode")
 
 
 @app.post("/chat")
@@ -121,4 +122,4 @@ def chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail=f"Unknown disease '{req.disease}' for {req.crop}.")
     if req.lang not in llm_advice.VALID_LANGS:
         raise HTTPException(status_code=400, detail=f"Invalid lang '{req.lang}'.")
-    return llm_advice.ask_followup(req.crop, req.disease, req.question, req.lang)
+    return llm_advice.ask_followup(req.crop, req.disease, req.question, req.lang, provider=req.provider)

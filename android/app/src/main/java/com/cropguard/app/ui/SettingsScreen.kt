@@ -2,6 +2,7 @@ package com.cropguard.app.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.cropguard.app.data.ApiClient
 import com.cropguard.app.vm.CropViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +59,35 @@ fun SettingsScreen(vm: CropViewModel, onBack: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            // --- AI Provider ---
+            Text(L.t("ai_provider", state.lang), style = MaterialTheme.typography.titleMedium)
+            Text(
+                L.t("ai_provider_desc", state.lang),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.outline,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = state.aiProvider == ApiClient.PROVIDER_GEMINI,
+                    onClick = { vm.setAiProvider(ApiClient.PROVIDER_GEMINI) },
+                    label = { Text(L.t("provider_gemini", state.lang)) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                )
+                FilterChip(
+                    selected = state.aiProvider == ApiClient.PROVIDER_OPENCODE,
+                    onClick = { vm.setAiProvider(ApiClient.PROVIDER_OPENCODE) },
+                    label = { Text(L.t("provider_opencode", state.lang)) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                )
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // --- Server URL ---
             Text(L.t("server_url", state.lang), style = MaterialTheme.typography.titleMedium)
             Text(
                 L.t("server_url_desc", state.lang),

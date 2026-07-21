@@ -3,9 +3,10 @@ CropGuard — treatment advice helper (shared by server.py and app.py).
 
 Two tiers of advice:
 1. Static recommendations from treatments.json (always available, no key needed).
-2. Optional AI follow-up answers via the Gemini free tier (google-genai package,
-   GEMINI_API_KEY env var). The AI receives the static content as grounding
-   context and answers in the user's language.
+2. Optional AI follow-up answers via:
+   - Google Gemini free tier (google-genai package, GEMINI_API_KEY env var)
+   - OpenCode Go (OPENCODE_API_KEY env var, OpenAI-compatible API)
+   The AI receives the static content as grounding context and answers in the user's language.
 """
 import os, json
 
@@ -14,7 +15,14 @@ WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 LANG_NAMES = {"en": "English", "es": "Spanish", "va": "Valencian"}
 VALID_LANGS = tuple(LANG_NAMES)
 
+# Provider constants
+PROVIDER_GEMINI = "gemini"
+PROVIDER_OPENCODE = "opencode"
+DEFAULT_PROVIDER = os.environ.get("CROPGUARD_AI_PROVIDER", PROVIDER_OPENCODE)
+
 GEMINI_MODEL = "gemini-2.0-flash"
+OPENCODE_MODEL = "deepseek-v4-flash"
+OPENCODE_API_URL = "https://opencode.ai/zen/go/v1/chat/completions"
 
 _treatments = None
 _gemini_client = "unset"
@@ -55,6 +63,11 @@ def _get_gemini_client():
     return _gemini_client
 
 
+def _get_opencode_key():
+    """Return OpenCode API key or None if not set."""
+    return os.environ.get("OPENCODE_API_KEY", "") or None
+
+
 def build_prompt(crop, disease, question, lang):
     static = get_static_treatment(crop, disease, lang) or get_static_treatment(crop, disease, "en") or {}
     context = json.dumps(static, ensure_ascii=False)
@@ -70,28 +83,62 @@ def build_prompt(crop, disease, question, lang):
     )
 
 
-def ask_followup(crop, disease, question, lang="en"):
+def _ask_gemini(crop, disease, question, lang):
+    """Ask Gemini. Returns answer string or raises."""
+    client = _get_gemini_client()
+    if client is None:
+        raise RuntimeError("Gemini client unavailable (set GEMINI_API_KEY)")
+    resp = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=build_prompt(crop, disease, question, lang),
+    )
+    return resp.text
+
+
+def _ask_opencode(crop, disease, question, lang):
+    """Ask OpenCode Go via OpenAI-compatible API. Returns answer string or raises."""
+    import requests as _requests
+
+    api_key = _get_opencode_key()
+    if not api_key:
+        raise RuntimeError("OpenCode API key unavailable (set OPENCODE_API_KEY)")
+    resp = _requests.post(
+        OPENCODE_API_URL,
+        headers={"Authorization": f"Bearer {api_key}"},
+        json={
+            "model": OPENCODE_MODEL,
+            "messages": [{"role": "user", "content": build_prompt(crop, disease, question, lang)}],
+            "max_tokens": 512,
+        },
+        timeout=60,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    return data["choices"][0]["message"]["content"]
+
+
+def ask_followup(crop, disease, question, lang="en", provider=None):
     """Ask the AI a follow-up question about a diagnosed disease.
 
     Returns {"answer": str|None, "fallback": dict|None, "note": str|None}.
     When the AI is unavailable, answer is None and fallback holds the static
     treatment so callers can still show something useful."""
-    client = _get_gemini_client()
-    if client is None:
-        return {
-            "answer": None,
-            "fallback": get_static_treatment(crop, disease, lang),
-            "note": "AI unavailable (set GEMINI_API_KEY) — showing stored recommendations.",
-        }
+    provider = provider or DEFAULT_PROVIDER
     try:
-        resp = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=build_prompt(crop, disease, question, lang),
-        )
-        return {"answer": resp.text, "fallback": None, "note": None}
+        if provider == PROVIDER_GEMINI:
+            answer = _ask_gemini(crop, disease, question, lang)
+        elif provider == PROVIDER_OPENCODE:
+            answer = _ask_opencode(crop, disease, question, lang)
+        else:
+            return {
+                "answer": None,
+                "fallback": get_static_treatment(crop, disease, lang),
+                "note": f"Unknown provider: {provider}",
+            }
+        return {"answer": answer, "fallback": None, "note": None}
     except Exception as e:
         return {
             "answer": None,
             "fallback": get_static_treatment(crop, disease, lang),
-            "note": f"AI error: {e}",
+            "note": f"AI error ({provider}): {e}",
         }

@@ -40,7 +40,13 @@ data class TreatmentFallback(
     val prevention: List<String>,
 )
 
-data class ChatRequest(val crop: String, val disease: String, val question: String, val lang: String)
+data class ChatRequest(
+    val crop: String,
+    val disease: String,
+    val question: String,
+    val lang: String,
+    val provider: String? = null,
+)
 
 data class ChatResponse(val answer: String?, val fallback: TreatmentFallback?, val note: String?)
 
@@ -67,6 +73,9 @@ object ApiClient {
 
     private const val PREFS_NAME = "cropguard"
     private const val KEY_SERVER_URL = "server_url"
+    private const val KEY_AI_PROVIDER = "ai_provider"
+    const val PROVIDER_GEMINI = "gemini"
+    const val PROVIDER_OPENCODE = "opencode"
 
     @Volatile
     private var _api: CropGuardApi? = null
@@ -109,5 +118,15 @@ object ApiClient {
     fun getServerUrl(context: Context): String {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getString(KEY_SERVER_URL, BuildConfig.BASE_URL) ?: BuildConfig.BASE_URL
+    }
+
+    fun getAiProvider(context: Context): String {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_AI_PROVIDER, PROVIDER_OPENCODE) ?: PROVIDER_OPENCODE
+    }
+
+    fun setAiProvider(context: Context, provider: String) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit().putString(KEY_AI_PROVIDER, provider).apply()
     }
 }

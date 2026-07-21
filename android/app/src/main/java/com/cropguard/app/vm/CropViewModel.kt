@@ -28,13 +28,17 @@ data class UiState(
     val treatment: TreatmentResponse? = null,
     val chat: List<ChatMessage> = emptyList(),
     val lang: String = "en",
+    val aiProvider: String = ApiClient.PROVIDER_OPENCODE,
 )
 
 class CropViewModel(app: Application) : AndroidViewModel(app) {
 
     private val prefs = app.getSharedPreferences("cropguard", Context.MODE_PRIVATE)
 
-    private val _state = MutableStateFlow(UiState(lang = prefs.getString("lang", "en") ?: "en"))
+    private val _state = MutableStateFlow(UiState(
+        lang = prefs.getString("lang", "en") ?: "en",
+        aiProvider = ApiClient.getAiProvider(app),
+    ))
     val state: StateFlow<UiState> = _state
 
     val serverUrl: String
@@ -63,6 +67,11 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setServerUrl(url: String) {
         ApiClient.setServerUrl(getApplication(), url)
+    }
+
+    fun setAiProvider(provider: String) {
+        ApiClient.setAiProvider(getApplication(), provider)
+        _state.value = _state.value.copy(aiProvider = provider)
     }
 
     fun analyze(onDone: () -> Unit) {
@@ -95,7 +104,10 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             try {
                 val resp = ApiClient.api.chat(
-                    ChatRequest(pred.crop, pred.disease, question, _state.value.lang))
+                    ChatRequest(
+                        pred.crop, pred.disease, question, _state.value.lang,
+                        provider = _state.value.aiProvider,
+                    ))
                 _state.value = _state.value.copy(
                     loading = false,
                     chat = _state.value.chat + ChatMessage(question, resp.answer, resp.note))
