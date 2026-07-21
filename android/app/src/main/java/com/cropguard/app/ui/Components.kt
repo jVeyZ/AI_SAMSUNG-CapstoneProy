@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -80,16 +81,29 @@ fun rememberTts(lang: String): TextToSpeech? {
 @Composable
 fun TtsButton(text: String, lang: String, modifier: Modifier = Modifier) {
     val tts = rememberTts(lang)
+    var speaking by remember { mutableStateOf(false) }
+    val uttId = remember { "tts_${System.currentTimeMillis()}" }
+
+    DisposableEffect(tts) {
+        onDispose { speaking = false }
+    }
+
     IconButton(
         onClick = {
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts_${System.currentTimeMillis()}")
+            if (speaking) {
+                tts?.stop()
+                speaking = false
+            } else {
+                tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, uttId)
+                speaking = true
+            }
         },
         enabled = tts != null,
         modifier = modifier,
     ) {
         Icon(
-            Icons.Default.PlayArrow,
-            contentDescription = "Read aloud",
+            if (speaking) Icons.Default.Pause else Icons.Default.PlayArrow,
+            contentDescription = if (speaking) "Stop" else "Read aloud",
             tint = if (tts != null) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.outline,
         )
@@ -237,14 +251,13 @@ fun ChatBubble(msg: ChatMessage, lang: String) {
                         TypingIndicator()
                     } else {
                         val answerText = msg.answer ?: msg.note ?: L.t("ai_unavailable", lang)
-                        Row(verticalAlignment = Alignment.Top) {
-                            Text(
-                                parseBasicMarkdown(answerText),
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f),
-                            )
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                             TtsButton(text = answerText, lang = lang)
                         }
+                        Text(
+                            parseBasicMarkdown(answerText),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
                     }
                 }
             }
