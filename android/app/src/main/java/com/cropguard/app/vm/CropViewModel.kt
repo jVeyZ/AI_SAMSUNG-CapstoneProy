@@ -15,7 +15,12 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-data class ChatMessage(val question: String, val answer: String?, val note: String?)
+data class ChatMessage(
+    val question: String,
+    val answer: String?,
+    val note: String?,
+    val isLoading: Boolean = false,
+)
 
 data class UiState(
     val crops: List<String> = listOf("Tomato", "Rice", "Orange"),
@@ -100,7 +105,8 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
         val s = _state.value
         val pred = s.prediction ?: return
         if (question.isBlank()) return
-        _state.value = s.copy(loading = true)
+        val loadingMsg = ChatMessage(question, answer = null, note = null, isLoading = true)
+        _state.value = s.copy(chat = s.chat + loadingMsg)
         viewModelScope.launch {
             try {
                 val resp = ApiClient.api.chat(
@@ -108,11 +114,19 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
                         pred.crop, pred.disease, question, _state.value.lang,
                         provider = _state.value.aiProvider,
                     ))
-                _state.value = _state.value.copy(
-                    loading = false,
-                    chat = _state.value.chat + ChatMessage(question, resp.answer, resp.note))
+                val current = _state.value.chat.toMutableList()
+                val idx = current.indexOfLast { it.isLoading }
+                if (idx >= 0) {
+                    current[idx] = ChatMessage(question, resp.answer, resp.note)
+                }
+                _state.value = _state.value.copy(chat = current)
             } catch (e: Exception) {
-                _state.value = _state.value.copy(loading = false, errorNetwork = true)
+                val current = _state.value.chat.toMutableList()
+                val idx = current.indexOfLast { it.isLoading }
+                if (idx >= 0) {
+                    current[idx] = ChatMessage(question, answer = null, note = "Network error")
+                }
+                _state.value = _state.value.copy(chat = current, errorNetwork = true)
             }
         }
     }

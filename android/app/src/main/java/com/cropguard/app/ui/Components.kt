@@ -1,5 +1,11 @@
 package com.cropguard.app.ui
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -111,6 +118,37 @@ fun parseBasicMarkdown(text: String): AnnotatedString = buildAnnotatedString {
 }
 
 @Composable
+private fun TypingIndicator() {
+    val transition = rememberInfiniteTransition(label = "typing")
+    val alpha by transition.animateFloat(
+        initialValue = 0.3f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(400, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "dot",
+    )
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+        listOf(0f, 0.15f, 0.3f).forEach { delay ->
+            val dotAlpha by transition.animateFloat(
+                initialValue = 0.3f, targetValue = 1f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(400, delayMillis = (delay * 1000).toInt(), easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse,
+                ),
+                label = "dot$delay",
+            )
+            Text(
+                "\u2022",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.alpha(dotAlpha),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
 fun ChatBubble(msg: ChatMessage, lang: String) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
@@ -129,11 +167,15 @@ fun ChatBubble(msg: ChatMessage, lang: String) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
             Card(shape = RoundedCornerShape(18.dp)) {
                 Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
-                    val answerText = msg.answer ?: msg.note ?: L.t("ai_unavailable", lang)
-                    Text(
-                        parseBasicMarkdown(answerText),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    if (msg.isLoading) {
+                        TypingIndicator()
+                    } else {
+                        val answerText = msg.answer ?: msg.note ?: L.t("ai_unavailable", lang)
+                        Text(
+                            parseBasicMarkdown(answerText),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
             }
         }
