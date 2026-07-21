@@ -5,6 +5,7 @@ _hlinktest/
 __pycache__/
 .pytest_cache/
 .idea/
+.env
 
 # Android / Gradle build artifacts
 android/.gradle/

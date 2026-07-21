@@ -9,6 +9,15 @@ Two tiers of advice:
    The AI receives the static content as grounding context and answers in the user's language.
 """
 import os, json
+from pathlib import Path
+
+# Load .env from project src/ directory (one level up from cropguard package)
+_env_path = Path(__file__).resolve().parent.parent / ".env"
+try:
+    from dotenv import load_dotenv
+    load_dotenv(_env_path)
+except ImportError:
+    pass
 
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,7 +30,7 @@ PROVIDER_OPENCODE = "opencode"
 DEFAULT_PROVIDER = os.environ.get("CROPGUARD_AI_PROVIDER", PROVIDER_OPENCODE)
 
 GEMINI_MODEL = "gemini-2.0-flash"
-OPENCODE_MODEL = "deepseek-v4-flash"
+OPENCODE_MODEL = "qwen3.5-plus"
 OPENCODE_API_URL = "https://opencode.ai/zen/go/v1/chat/completions"
 
 _treatments = None
