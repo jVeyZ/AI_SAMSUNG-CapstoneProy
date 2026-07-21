@@ -29,6 +29,7 @@ data class UiState(
     val imageMime: String = "image/jpeg",
     val loading: Boolean = false,
     val errorNetwork: Boolean = false,
+    val errorBadImage: Boolean = false,
     val prediction: PredictResponse? = null,
     val treatment: TreatmentResponse? = null,
     val chat: List<ChatMessage> = emptyList(),
@@ -54,7 +55,11 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun setImage(bytes: ByteArray, mime: String) {
-        _state.value = _state.value.copy(imageBytes = bytes, imageMime = mime, errorNetwork = false)
+        _state.value = _state.value.copy(imageBytes = bytes, imageMime = mime, errorNetwork = false, errorBadImage = false)
+    }
+
+    fun setImageError() {
+        _state.value = _state.value.copy(errorBadImage = true)
     }
 
     fun setLanguage(lang: String) {

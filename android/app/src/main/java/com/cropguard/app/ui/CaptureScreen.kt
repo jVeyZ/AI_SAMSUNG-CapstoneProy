@@ -57,8 +57,14 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit, onSettings: () -> Uni
     val ctx = LocalContext.current
     var cameraUri by remember { mutableStateOf<Uri?>(null) }
 
+    val ALLOWED_IMAGE_TYPES = setOf("image/jpeg", "image/png", "image/bmp", "image/webp")
+
     fun readUri(uri: Uri) {
         val mime = ctx.contentResolver.getType(uri) ?: "image/jpeg"
+        if (mime !in ALLOWED_IMAGE_TYPES) {
+            vm.setImageError()
+            return
+        }
         val bytes = ctx.contentResolver.openInputStream(uri)?.use { it.readBytes() }
         if (bytes != null) vm.setImage(bytes, mime)
     }
@@ -159,6 +165,9 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit, onSettings: () -> Uni
 
             if (state.errorNetwork) {
                 Text(L.t("error_network", state.lang), color = MaterialTheme.colorScheme.error)
+            }
+            if (state.errorBadImage) {
+                Text(L.t("error_bad_image", state.lang), color = MaterialTheme.colorScheme.error)
             }
 
             Button(
