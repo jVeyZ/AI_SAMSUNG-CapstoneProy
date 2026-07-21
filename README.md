@@ -9,9 +9,10 @@ Built as a capstone project for [Samsung Innovation Campus](https://innovationca
 - **Multi-crop diagnosis** — 25 diseases across Tomato (10), Rice (10), and Orange (5)
 - **Real-time inference** — fine-tuned ResNet50 runs locally on-device (or via backend API)
 - **Trilingual support** — treatment cards in English, Spanish, and Valencian
-- **AI follow-up chat** — ask follow-up questions about a diagnosis (Gemini free tier)
+- **AI follow-up chat** — ask follow-up questions via Gemini or OpenCode (with typing indicator and markdown rendering)
 - **Android app** — Kotlin + Jetpack Compose with camera and gallery capture
 - **Web demo** — Streamlit app for quick browser-based testing
+- **Keyboard-aware UI** — chat scrolls up when keyboard opens, user messages appear instantly
 
 ## Architecture
 
@@ -39,6 +40,7 @@ Each crop has its own independently trained model (~92 MB). Two-phase fine-tunin
 
 ```bash
 pip install -r requirements.txt
+pip install -e .                  # install cropguard as editable package
 ```
 
 ### 2. Download datasets
@@ -88,25 +90,27 @@ CropGuard/
 │   ├── server.py            # FastAPI backend
 │   ├── predict_worker.py    # CLI inference
 │   ├── setup.py             # dataset download/setup
-│   ├── llm_advice.py        # Gemini AI + static fallback
-│   └── treatments.json      # 25 diseases × 3 languages
+│   ├── llm_advice.py        # Gemini + OpenCode AI + static fallback
+│   ├── treatments.json      # 25 diseases × 3 languages
+│   └── .env                 # API keys (gitignored)
 ├── android/                 # Kotlin + Jetpack Compose app
 ├── tests/                   # pytest unit + e2e tests
 ├── scripts/                 # helper scripts
-└── docs/                    # capstone templates
+├── docs/                    # capstone templates
+└── pyproject.toml           # package config for editable install
 ```
 
 ## Tech Stack
 
-| Layer       | Technology                                    |
-| ----------- | --------------------------------------------- |
-| Model       | ResNet50 (torchvision), fine-tuned per crop   |
-| Training    | PyTorch, scikit-learn, matplotlib             |
-| Web demo    | Streamlit                                     |
-| Backend API | FastAPI + uvicorn                             |
-| Android     | Kotlin, Jetpack Compose, Material 3, Retrofit |
-| AI chat     | Google Gemini 2.0 Flash (free tier)           |
-| CI/CD       | GitHub Actions (Python + Android jobs)        |
+| Layer       | Technology                                          |
+| ----------- | --------------------------------------------------- |
+| Model       | ResNet50 (torchvision), fine-tuned per crop         |
+| Training    | PyTorch, scikit-learn, matplotlib                   |
+| Web demo    | Streamlit                                           |
+| Backend API | FastAPI + uvicorn                                   |
+| Android     | Kotlin, Jetpack Compose, Material 3, Retrofit       |
+| AI chat     | Google Gemini 2.0 Flash / OpenCode (qwen3.5-plus)  |
+| CI/CD       | GitHub Actions (Python + Android jobs)              |
 
 ## Android App
 
@@ -117,16 +121,22 @@ The Android app communicates with the FastAPI backend:
 
 ```bash
 # Build APK
-android\gradlew.bat -p android assembleDebug
+android/gradlew.bat -p android assembleDebug
 
 # Run tests
-android\gradlew.bat -p android testDebugUnitTest
+android/gradlew.bat -p android testDebugUnitTest
 ```
 
 Requires JDK 17+. These should already be set as persistent env vars. If not:
 
+```bash
+# bash (Linux/macOS)
+export JAVA_HOME="/path/to/android-studio/jbr"
+export ANDROID_HOME="$HOME/Android/Sdk"
+```
+
 ```powershell
-# PowerShell (persistent)
+# PowerShell (Windows, persistent)
 [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Android\Android Studio\jbr", "User")
 [Environment]::SetEnvironmentVariable("ANDROID_HOME", "$env:LOCALAPPDATA\Android\Sdk", "User")
 ```
@@ -141,19 +151,39 @@ python -m pytest tests/e2e -v       # end-to-end (spawns real server)
 
 Tests run without real models or API keys — random-weight models are generated in a temp directory.
 
-## AI Follow-up Chat (Optional)
+## AI Follow-up Chat
 
-Set the `GEMINI_API_KEY` environment variable to enable AI-powered follow-up questions:
+Set an API key to enable AI-powered follow-up questions. The app supports two providers:
+
+| Provider    | Env var             | Free tier                         |
+| ----------- | ------------------- | --------------------------------- |
+| OpenCode    | `OPENCODE_API_KEY`  | Yes (qwen3.5-plus model)          |
+| Gemini      | `GEMINI_API_KEY`    | Yes (2.0 Flash model)             |
+
+Keys are read from environment variables or `src/.env`:
 
 ```bash
-# Windows
-setx GEMINI_API_KEY "your-key-here"
-
-# Linux/macOS
-export GEMINI_API_KEY="your-key-here"
+# bash
+export OPENCODE_API_KEY="sk-..."
 ```
 
-Get a free key at [aistudio.google.com](https://aistudio.google.com/apikey). Without it, the app returns pre-written treatment advice (no AI).
+```powershell
+# PowerShell
+$env:OPENCODE_API_KEY = "sk-..."
+```
+
+Or create `src/.env`:
+
+```
+OPENCODE_API_KEY=sk-...
+GEMINI_API_KEY=AIza...
+```
+
+Without any key, the app returns pre-written treatment advice (no AI).
+
+## Image Types
+
+The Android app accepts **JPEG, PNG, BMP, and WebP** images. Unsupported types are rejected with an error message before reaching the server. The Streamlit web app accepts **JPG, JPEG, and PNG**.
 
 ## License
 
