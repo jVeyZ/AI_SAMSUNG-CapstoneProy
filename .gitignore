@@ -1,6 +1,6 @@
 models/
 results/
-data/
+/data/
 _hlinktest/
 __pycache__/
 .pytest_cache/

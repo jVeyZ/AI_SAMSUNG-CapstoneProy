@@ -52,7 +52,7 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit) {
+fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit, onSettings: () -> Unit = {}) {
     val state by vm.state.collectAsState()
     val ctx = LocalContext.current
     var cameraUri by remember { mutableStateOf<Uri?>(null) }
@@ -74,7 +74,10 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit) {
         topBar = {
             TopAppBar(
                 title = { Text("CropGuard") },
-                actions = { LanguageMenu(vm) },
+                actions = {
+                    SettingsButton(onClick = onSettings, lang = state.lang)
+                    LanguageMenu(vm)
+                },
             )
         }
     ) { padding ->
@@ -188,7 +191,14 @@ fun CaptureScreen(vm: CropViewModel, onResult: () -> Unit) {
 private fun PreviewCaptureScreen() {
     CropGuardTheme {
         Scaffold(
-            topBar = { TopAppBar(title = { Text("CropGuard") }) }
+            topBar = {
+                TopAppBar(
+                    title = { Text("CropGuard") },
+                    actions = {
+                        SettingsButton(onClick = {}, lang = "en")
+                    },
+                )
+            }
         ) { padding ->
             Column(
                 modifier = Modifier

@@ -11,14 +11,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.cropguard.app.data.ApiClient
 import com.cropguard.app.ui.CaptureScreen
 import com.cropguard.app.ui.ResultScreen
+import com.cropguard.app.ui.SettingsScreen
 import com.cropguard.app.ui.theme.CropGuardTheme
 import com.cropguard.app.vm.CropViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ApiClient.init(this)
         setContent {
             CropGuardTheme {
                 Surface(
@@ -29,10 +32,17 @@ class MainActivity : ComponentActivity() {
                     val vm: CropViewModel = viewModel()
                     NavHost(navController = nav, startDestination = "capture") {
                         composable("capture") {
-                            CaptureScreen(vm, onResult = { nav.navigate("result") })
+                            CaptureScreen(
+                                vm,
+                                onResult = { nav.navigate("result") },
+                                onSettings = { nav.navigate("settings") },
+                            )
                         }
                         composable("result") {
-                            ResultScreen(vm, onBack = { nav.popBackStack() })
+                            ResultScreen(vm, onBack = { nav.popBackStack() }, onSettings = { nav.navigate("settings") })
+                        }
+                        composable("settings") {
+                            SettingsScreen(vm, onBack = { nav.popBackStack() })
                         }
                     }
                 }

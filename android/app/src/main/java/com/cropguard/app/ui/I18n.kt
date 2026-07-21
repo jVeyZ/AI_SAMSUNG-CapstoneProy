@@ -61,6 +61,12 @@ object L {
         "crop_tomato" to "Tomato",
         "crop_rice" to "Rice",
         "crop_orange" to "Orange",
+        "settings" to "Settings",
+        "server_url" to "Server URL",
+        "server_url_hint" to "http://192.168.1.101:8000",
+        "server_url_desc" to "IP address and port of the CropGuard backend server.",
+        "save" to "Save",
+        "saved" to "Saved",
     )
 
     private val UI_ES = mapOf(
@@ -89,6 +95,12 @@ object L {
         "crop_tomato" to "Tomate",
         "crop_rice" to "Arroz",
         "crop_orange" to "Naranja",
+        "settings" to "Configuración",
+        "server_url" to "URL del servidor",
+        "server_url_hint" to "http://192.168.1.101:8000",
+        "server_url_desc" to "Dirección IP y puerto del servidor backend de CropGuard.",
+        "save" to "Guardar",
+        "saved" to "Guardado",
     )
 
     private val UI_VA = mapOf(
@@ -117,6 +129,12 @@ object L {
         "crop_tomato" to "Tomàtiga",
         "crop_rice" to "Arròs",
         "crop_orange" to "Taronja",
+        "settings" to "Configuració",
+        "server_url" to "URL del servidor",
+        "server_url_hint" to "http://192.168.1.101:8000",
+        "server_url_desc" to "Adreça IP i port del servidor backend de CropGuard.",
+        "save" to "Guarda",
+        "saved" to "Guardat",
     )
 
     private val DISEASES_EN = mapOf(

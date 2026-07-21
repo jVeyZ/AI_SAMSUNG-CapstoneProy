@@ -37,6 +37,9 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
     private val _state = MutableStateFlow(UiState(lang = prefs.getString("lang", "en") ?: "en"))
     val state: StateFlow<UiState> = _state
 
+    val serverUrl: String
+        get() = ApiClient.getServerUrl(getApplication())
+
     fun selectCrop(crop: String) {
         _state.value = _state.value.copy(selectedCrop = crop)
     }
@@ -56,6 +59,10 @@ class CropViewModel(app: Application) : AndroidViewModel(app) {
                     .onSuccess { _state.value = _state.value.copy(treatment = it) }
             }
         }
+    }
+
+    fun setServerUrl(url: String) {
+        ApiClient.setServerUrl(getApplication(), url)
     }
 
     fun analyze(onDone: () -> Unit) {

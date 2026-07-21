@@ -45,7 +45,7 @@ import com.cropguard.app.vm.CropViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ResultScreen(vm: CropViewModel, onBack: () -> Unit) {
+fun ResultScreen(vm: CropViewModel, onBack: () -> Unit, onSettings: () -> Unit = {}) {
     val state by vm.state.collectAsState()
     var question by remember { mutableStateOf("") }
     val pred = state.prediction
@@ -59,7 +59,10 @@ fun ResultScreen(vm: CropViewModel, onBack: () -> Unit) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                actions = { LanguageMenu(vm) },
+                actions = {
+                    SettingsButton(onClick = onSettings, lang = state.lang)
+                    LanguageMenu(vm)
+                },
             )
         }
     ) { padding ->
@@ -171,6 +174,8 @@ private fun PreviewResultScreen() {
         Scaffold(
             topBar = { TopAppBar(title = { Text("Diagnosis Result") }, navigationIcon = {
                 IconButton(onClick = {}) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null) }
+            }, actions = {
+                SettingsButton(onClick = {}, lang = "en")
             }) }
         ) { padding ->
             LazyColumn(

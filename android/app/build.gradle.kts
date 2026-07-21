@@ -20,7 +20,7 @@ android {
         // 10.0.2.2 reaches the host machine from the Android emulator.
         // For a physical phone on the same Wi-Fi, use the PC's LAN IP instead,
         // e.g. "http://192.168.1.50:8000"
-        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8000\"")
+        buildConfigField("String", "BASE_URL", "\"http://192.168.1.101:8000\"")
     }
 
     buildTypes {
