@@ -76,6 +76,7 @@ object ApiClient {
     private const val KEY_AI_PROVIDER = "ai_provider"
     const val PROVIDER_GEMINI = "gemini"
     const val PROVIDER_OPENCODE = "opencode"
+    const val PROVIDER_GROQ = "groq"
 
     @Volatile
     private var _api: CropGuardApi? = null
@@ -122,7 +123,7 @@ object ApiClient {
 
     fun getAiProvider(context: Context): String {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getString(KEY_AI_PROVIDER, PROVIDER_OPENCODE) ?: PROVIDER_OPENCODE
+            .getString(KEY_AI_PROVIDER, PROVIDER_GROQ) ?: PROVIDER_GROQ
     }
 
     fun setAiProvider(context: Context, provider: String) {

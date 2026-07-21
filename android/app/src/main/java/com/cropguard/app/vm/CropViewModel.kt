@@ -35,7 +35,7 @@ data class UiState(
     val treatment: TreatmentResponse? = null,
     val chat: List<ChatMessage> = emptyList(),
     val lang: String = "en",
-    val aiProvider: String = ApiClient.PROVIDER_OPENCODE,
+    val aiProvider: String = ApiClient.PROVIDER_GROQ,
 )
 
 class CropViewModel(app: Application) : AndroidViewModel(app) {

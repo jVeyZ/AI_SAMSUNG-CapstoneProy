@@ -68,6 +68,14 @@ fun SettingsScreen(vm: CropViewModel, onBack: () -> Unit) {
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(
+                    selected = state.aiProvider == ApiClient.PROVIDER_GROQ,
+                    onClick = { vm.setAiProvider(ApiClient.PROVIDER_GROQ) },
+                    label = { Text(L.t("provider_groq", state.lang)) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                )
+                FilterChip(
                     selected = state.aiProvider == ApiClient.PROVIDER_GEMINI,
                     onClick = { vm.setAiProvider(ApiClient.PROVIDER_GEMINI) },
                     label = { Text(L.t("provider_gemini", state.lang)) },
