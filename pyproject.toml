@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cropguard"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "torchvision",
+    "streamlit",
+    "fastapi",
+    "uvicorn",
+    "python-dotenv",
+    "requests",
+    "Pillow",
+    "numpy",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["cropguard*"]
