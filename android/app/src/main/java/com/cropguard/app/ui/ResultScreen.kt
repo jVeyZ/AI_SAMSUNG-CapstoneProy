@@ -192,6 +192,7 @@ fun ResultScreen(vm: CropViewModel, onBack: () -> Unit, onSettings: () -> Unit =
                             L.t("treatment", state.lang) to t.treatment,
                             L.t("prevention", state.lang) to t.prevention,
                         ),
+                        lang = state.lang,
                     )
                 }
             }

@@ -1,5 +1,6 @@
 package com.cropguard.app.ui
 
+import android.speech.tts.TextToSpeech
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,17 +37,64 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cropguard.app.ui.theme.CropGuardTheme
 import com.cropguard.app.vm.ChatMessage
 import com.cropguard.app.vm.CropViewModel
+import java.util.Locale
+
+private fun langToLocale(lang: String): Locale = when (lang) {
+    "es" -> Locale("es")
+    "va" -> Locale("ca")
+    else -> Locale.ENGLISH
+}
+
+@Composable
+fun rememberTts(lang: String): TextToSpeech? {
+    val ctx = LocalContext.current
+    var tts by remember { mutableStateOf<TextToSpeech?>(null) }
+    DisposableEffect(lang) {
+        val engine = TextToSpeech(ctx) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts?.language = langToLocale(lang)
+            }
+        }
+        tts = engine
+        onDispose {
+            engine.stop()
+            engine.shutdown()
+            tts = null
+        }
+    }
+    return tts
+}
+
+@Composable
+fun TtsButton(text: String, lang: String, modifier: Modifier = Modifier) {
+    val tts = rememberTts(lang)
+    IconButton(
+        onClick = {
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts_${System.currentTimeMillis()}")
+        },
+        enabled = tts != null,
+        modifier = modifier,
+    ) {
+        Icon(
+            Icons.Default.PlayArrow,
+            contentDescription = "Read aloud",
+            tint = if (tts != null) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.outline,
+        )
+    }
+}
 
 @Composable
 fun LanguageMenu(vm: CropViewModel) {
@@ -83,14 +133,25 @@ fun TreatmentCard(
     title: String,
     explanation: String,
     sections: List<Pair<String, List<String>>>,
+    lang: String = "en",
 ) {
+    val ttsText = buildString {
+        appendLine(explanation)
+        sections.forEach { (heading, items) ->
+            appendLine(heading)
+            items.forEach { appendLine(it) }
+        }
+    }
     Card(
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
     ) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(title, style = MaterialTheme.typography.titleLarge)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+                TtsButton(text = ttsText, lang = lang)
+            }
             Text(explanation, style = MaterialTheme.typography.bodyMedium)
             sections.forEach { (heading, items) ->
                 Spacer(Modifier.height(2.dp))
@@ -176,10 +237,14 @@ fun ChatBubble(msg: ChatMessage, lang: String) {
                         TypingIndicator()
                     } else {
                         val answerText = msg.answer ?: msg.note ?: L.t("ai_unavailable", lang)
-                        Text(
-                            parseBasicMarkdown(answerText),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
+                        Row(verticalAlignment = Alignment.Top) {
+                            Text(
+                                parseBasicMarkdown(answerText),
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f),
+                            )
+                            TtsButton(text = answerText, lang = lang)
+                        }
                     }
                 }
             }
