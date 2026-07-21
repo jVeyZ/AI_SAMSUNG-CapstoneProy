@@ -4,6 +4,7 @@ CropGuard — treatment advice helper (shared by server.py and app.py).
 Two tiers of advice:
 1. Static recommendations from treatments.json (always available, no key needed).
 2. Optional AI follow-up answers via:
+   - Groq (GROQ_API_KEY env var, OpenAI-compatible API)
    - Google Gemini free tier (google-genai package, GEMINI_API_KEY env var)
    - OpenCode Go (OPENCODE_API_KEY env var, OpenAI-compatible API)
    The AI receives the static content as grounding context and answers in the user's language.
@@ -25,13 +26,16 @@ LANG_NAMES = {"en": "English", "es": "Spanish", "va": "Valencian"}
 VALID_LANGS = tuple(LANG_NAMES)
 
 # Provider constants
+PROVIDER_GROQ = "groq"
 PROVIDER_GEMINI = "gemini"
 PROVIDER_OPENCODE = "opencode"
-DEFAULT_PROVIDER = os.environ.get("CROPGUARD_AI_PROVIDER", PROVIDER_OPENCODE)
+DEFAULT_PROVIDER = os.environ.get("CROPGUARD_AI_PROVIDER", PROVIDER_GROQ)
 
 GEMINI_MODEL = "gemini-2.0-flash"
 OPENCODE_MODEL = "qwen3.5-plus"
 OPENCODE_API_URL = "https://opencode.ai/zen/go/v1/chat/completions"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 _treatments = None
 _gemini_client = "unset"
@@ -75,6 +79,11 @@ def _get_gemini_client():
 def _get_opencode_key():
     """Return OpenCode API key or None if not set."""
     return os.environ.get("OPENCODE_API_KEY", "") or None
+
+
+def _get_groq_key():
+    """Return Groq API key or None if not set."""
+    return os.environ.get("GROQ_API_KEY", "") or None
 
 
 def build_prompt(crop, disease, question, lang):
@@ -126,6 +135,28 @@ def _ask_opencode(crop, disease, question, lang):
     return data["choices"][0]["message"]["content"]
 
 
+def _ask_groq(crop, disease, question, lang):
+    """Ask Groq via OpenAI-compatible API. Returns answer string or raises."""
+    import requests as _requests
+
+    api_key = _get_groq_key()
+    if not api_key:
+        raise RuntimeError("Groq API key unavailable (set GROQ_API_KEY)")
+    resp = _requests.post(
+        GROQ_API_URL,
+        headers={"Authorization": f"Bearer {api_key}"},
+        json={
+            "model": GROQ_MODEL,
+            "messages": [{"role": "user", "content": build_prompt(crop, disease, question, lang)}],
+            "max_tokens": 512,
+        },
+        timeout=60,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    return data["choices"][0]["message"]["content"]
+
+
 def ask_followup(crop, disease, question, lang="en", provider=None):
     """Ask the AI a follow-up question about a diagnosed disease.
 
@@ -134,7 +165,9 @@ def ask_followup(crop, disease, question, lang="en", provider=None):
     treatment so callers can still show something useful."""
     provider = provider or DEFAULT_PROVIDER
     try:
-        if provider == PROVIDER_GEMINI:
+        if provider == PROVIDER_GROQ:
+            answer = _ask_groq(crop, disease, question, lang)
+        elif provider == PROVIDER_GEMINI:
             answer = _ask_gemini(crop, disease, question, lang)
         elif provider == PROVIDER_OPENCODE:
             answer = _ask_opencode(crop, disease, question, lang)
