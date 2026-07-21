@@ -8,7 +8,7 @@ Endpoints:
     GET  /treatment/{crop}/{disease}?lang= → static treatment (en/es/va)
     POST /chat     {crop, disease, question, lang} → AI follow-up (Gemini free tier)
 
-Run:  uvicorn server:app --port 8000
+Run:  uvicorn cropguard.server:app --host 0.0.0.0 --port 8000
 Models are read from CROPGUARD_MODELS_DIR (default: ./models) — the env override
 lets tests inject lightweight random-weight models.
 """
