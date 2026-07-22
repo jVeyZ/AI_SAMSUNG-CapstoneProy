@@ -39,10 +39,14 @@ from cropguard.model_def import (build_model, model_path, TRAIN_TRANSFORM, EVAL_
 
 CROP_DATA = get_crop_data()
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(REPO_ROOT, "data")
-RESULTS_DIR = os.path.join(REPO_ROOT, "results")
-RESULTS_FILE = os.path.join(RESULTS_DIR, "training_results.json")
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if not (REPO_ROOT / "pyproject.toml").exists():
+    REPO_ROOT = Path.cwd()
+DATA_DIR = REPO_ROOT / "src" / "data"
+RESULTS_DIR = REPO_ROOT / "results"
+RESULTS_FILE = RESULTS_DIR / "training_results.json"
 
 RANDOM_STATE = 42
 

@@ -24,11 +24,14 @@ from cropguard.crop_config import CROP_CLASSES, get_num_classes, get_disease_nam
 from cropguard.model_def import build_model, EVAL_TRANSFORM
 
 import cropguard.llm_advice as llm_advice
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from pathlib import Path
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if not (_REPO_ROOT / "pyproject.toml").exists():
+    _REPO_ROOT = Path.cwd()
 
 
 def _models_dir():
-    return os.environ.get("CROPGUARD_MODELS_DIR", os.path.join(_REPO_ROOT, "models"))
+    return os.environ.get("CROPGUARD_MODELS_DIR", str(_REPO_ROOT / "models"))
 
 
 app = FastAPI(title="CropGuard API", version="1.0.0")

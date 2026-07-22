@@ -6,13 +6,16 @@ and input preprocessing stay identical between training and inference.
 Change the head architecture ONLY here.
 """
 import os
+from pathlib import Path
 
 import torch
 import torch.nn as nn
 from torchvision import models, transforms
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-MODELS_DIR = os.environ.get("CROPGUARD_MODELS_DIR", os.path.join(REPO_ROOT, "models"))
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if not (_REPO_ROOT / "pyproject.toml").exists():
+    _REPO_ROOT = Path.cwd()
+MODELS_DIR = os.environ.get("CROPGUARD_MODELS_DIR", str(_REPO_ROOT / "models"))
 
 IMG_SIZE = (224, 224)
 # Pretrained ResNet50 expects ImageNet-normalized inputs — do not remove.

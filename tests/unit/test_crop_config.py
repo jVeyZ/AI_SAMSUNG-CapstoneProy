@@ -53,9 +53,9 @@ def test_imagefolder_assigns_indices_alphabetically():
 @pytest.mark.parametrize("crop", list(CROP_CLASSES))
 def test_alignment_with_real_data(crop):
     """Guard that would have caught the rice-order bug. Skips where data is absent (CI)."""
-    data_dir = os.path.join(REPO_ROOT, "data", crop.lower())
-    if not os.path.isdir(data_dir):
-        pytest.skip(f"{data_dir} not present")
+    data_dir = os.path.join(REPO_ROOT, "src", "data", crop.lower())
+    if not os.path.isdir(data_dir) or not os.listdir(data_dir):
+        pytest.skip(f"{data_dir} not present or empty")
     from torchvision.datasets import ImageFolder
 
     ds = ImageFolder(data_dir)

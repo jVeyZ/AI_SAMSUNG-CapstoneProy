@@ -11,8 +11,10 @@ Usage:
 import os, sys, shutil, argparse
 from pathlib import Path
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(REPO_ROOT, "data")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if not (REPO_ROOT / "pyproject.toml").exists():
+    REPO_ROOT = Path.cwd()
+DATA_DIR = REPO_ROOT / "src" / "data"
 
 
 TOMATO_MAP = {

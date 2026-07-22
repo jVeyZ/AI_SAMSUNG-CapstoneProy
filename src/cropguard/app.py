@@ -11,8 +11,10 @@ from PIL import Image
 from cropguard.crop_config import CROP_CLASSES, get_disease_name, get_num_classes
 from cropguard.model_def import build_model, model_path, EVAL_TRANSFORM
 import cropguard.llm_advice as llm_advice
-
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if not (REPO_ROOT / "pyproject.toml").exists():
+    REPO_ROOT = Path.cwd()
 
 # ---- TTS (graceful degradation if package missing) -----------------------
 _gtts_available = True

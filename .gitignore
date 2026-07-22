@@ -1,11 +1,14 @@
 models/
 results/
-/data/
+src/data/
 _hlinktest/
 __pycache__/
 .pytest_cache/
+src/*.egg-info/
+src/data/
 .idea/
 .env
+.venv/
 
 # Android / Gradle build artifacts
 android/.gradle/

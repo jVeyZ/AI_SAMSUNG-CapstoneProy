@@ -197,7 +197,7 @@ class TestLocalRealModels:
 
     def test_real_model_tomato(self, real_server):
         """Upload a real leaf photo — expected high confidence on a known disease."""
-        img_path = os.path.join(REPO_ROOT, "data", "Tomato", "test", "Tomato_Late_Blight")
+        img_path = os.path.join(REPO_ROOT, "src", "data", "Tomato", "test", "Tomato_Late_Blight")
         if not os.path.isdir(img_path):
             pytest.skip("No real Tomato test data")
         files = [f for f in os.listdir(img_path) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
