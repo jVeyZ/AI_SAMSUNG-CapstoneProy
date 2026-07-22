@@ -352,8 +352,9 @@ The project was developed over approximately 60 team-hours using a mob programmi
 | Phase | Team effort | Key decisions and outcomes |
 |-------|-------------|---------------------------|
 | Dataset acquisition | 4h mob | Downloaded Tomato and Rice via kagglehub; Orange required manual download. Structured into `data/<crop>/` directories. |
-| Keras prototype → PyTorch migration | 8h mob | Initial Keras + VGG16 pipeline reached only ~85% validation on Rice. Rewrote entire pipeline in PyTorch with ResNet50. |
-| Two-phase fine-tuning (`train.py`) | 6h mob | Implemented head warmup + layer4 unfreeze. This was the breakthrough moment: validation accuracy jumped from 85% to 94% on Rice in the first fine-tune epoch. |
+| Keras prototype (abandoned) | 8h mob | Keras + VGG16 pipeline trained but Rice validation accuracy never exceeded 58%. Keras-to-PyTorch shim silently broke batch norm and augmentation behaviour. Abandoned after two debugging sessions. |
+| Pure PyTorch rewrite (`train.py`) | 8h mob | Rebuilt training from scratch in PyTorch with ResNet50. Rice jumped from 58% to 72% immediately. Fixed class-order alignment bug (CROP_CLASSES vs. ImageFolder indices), fixed augmentation leakage into validation, added Windows multiprocessing guard. |
+| Two-phase fine-tuning | 6h mob | Implemented head warmup + layer4 unfreeze. This was the breakthrough moment: validation accuracy jumped from 85% to 94% on Rice in the first fine-tune epoch. Final: Rice 96.25%, Tomato 99.00%, Orange 98.57%. |
 | FastAPI backend + treatments.json | 4h mob | 5 endpoints, 75 treatment cards manually written across 3 languages. |
 | Streamlit web demo (`app.py`) | 2h mob | Built as a rapid prototype; served as the development interface while Android was under construction. |
 | Android app (v1) | 10h mob | Camera, gallery, predict, result display. Settings screen for server URL. |
@@ -367,7 +368,7 @@ The project was developed over approximately 60 team-hours using a mob programmi
 
 ### What failed and was discarded
 
-1. **Initial Keras/VGG16 pipeline:** The validation accuracy on Rice plateaued at 85%, which is insufficient for a tool intended to inform real treatment decisions. Pivoting to PyTorch + ResNet50 was a full rewrite, but the concepts—two-phase training, augmentation strategies, train/val/test split mechanics—transferred directly from the first attempt.
+1. **Keras + VGG16 pipeline:** The initial training script used Keras with `KERAS_BACKEND=torch` and a frozen VGG16 backbone. After two full mob debugging sessions—class weight tuning, head depth experiments, learning rate sweeps—Rice validation accuracy refused to exceed 58%. We traced the failure to the framework compatibility layer silently altering batch normalisation statistics and the internal augmentation pipeline. Abandoning 8 hours of Keras code for a pure PyTorch rewrite was painful, but the very first pure-PyTorch ResNet50 run hit 72% on Rice without any hyperparameter tuning, confirming the framework was the bottleneck, not the data or the approach.
 
 2. **Streamlit as a farmer-facing app:** While functional for demonstration, the Streamlit dashboard required a laptop and browser. The target farmer persona uses a smartphone exclusively. We kept Streamlit as our internal testing interface and built the Android app for real deployment.
 
@@ -393,39 +394,55 @@ We adopted industry-standard practices from day one to ensure the project remain
 
 ## Challenges
 
-### Technical challenges
+### Technical challenges — AI (CNN training)
 
-**1. Achieving reliable training accuracy on Rice (96.25%)**
+**1. Initial Keras pipeline: Rice stuck under 60% accuracy**
 
-Rice was the hardest crop to classify because several classes manifest as visually similar leaf discolouration. Our first PyTorch iteration used only 15 total epochs, which left Rice at 91% accuracy. We extended Rice training to 25 epochs (8 head warmup + 17 fine-tuning) and pushed through the local optimum where the model memorised the most common patterns. The key insight was that `Downy Mildew` and `Rice Blast` required more fine-tuning epochs than other classes because their discriminative features (lesion border texture, colour saturation gradient) are subtle and located in deeper residual blocks that only become trainable during phase 2.
+Our very first training attempt used a Keras pipeline (`KERAS_BACKEND=torch`) with a frozen VGG16 backbone and a shallow classification head. On Tomato it scraped past 80%, but Rice—the crop we most urgently needed accurate classification for because rice diseases spread across entire paddies through shared irrigation water—never exceeded 58% validation accuracy after 100 epochs of training. We spent two full mob sessions trying to debug this: we added class weights to counter suspected imbalance, we increased the head depth, we tuned the learning rate from 1×10⁻⁴ down to 1×10⁻⁶. Nothing moved the needle past 60% on Rice.
 
-**2. Orange dataset Cloudflare block**
+The breakthrough came when we realised the problem was not the model configuration but the **framework mismatch**. Keras with `KERAS_BACKEND=torch` was translating our training loop through a compatibility shim that silently changed how batch normalisation statistics were accumulated and how data augmentation was applied inside the framework's internal pipeline. We made the difficult decision to discard the entire Keras codebase and rewrite `train.py` as a pure PyTorch script. This was a major pivot—we lost approximately 8 hours of work—but the first pure-PyTorch run with ResNet50 (replacing VGG16) hit 72% on Rice immediately, confirming that the framework itself, not the data or the task, was the bottleneck.
 
-Mendeley's download API is behind Cloudflare anti-bot protection, making automated download impossible. We solved this by documenting the manual download procedure in `docs/Link_datasets.txt` and adding a local-ZIP extraction path in `setup.py` that reads from `orange_dataset.zip` in the repo root.
+**2. Alphabetical class order bug on Rice**
 
-**3. DeepSeek reasoning model format mismatch**
+After the PyTorch migration brought Rice accuracy to the mid-70s, we hit another wall: the model would confidently classify `Rice Blast` as `Brown Spot` and vice versa in ways that looked like random confusion rather than genuine visual ambiguity. We eventually traced this to a silent data-to-label mismatch. `torchvision.datasets.ImageFolder` assigns class indices alphabetically by subdirectory name—so `data/rice/Brown_spot/` gets index 3 while `data/rice/Rice_blast/` gets index 7. Our `CROP_CLASSES` dictionary listed the display names in a different order, so the model was being told that images from the `Brown_spot` folder belonged to the `Rice Blast` class. Every prediction was poisoned: a perfect 100% "accuracy" on the wrong labels. We fixed this by aligning `CROP_CLASSES["Rice"]` to exact alphabetical subdirectory order and adding a unit test (`test_crop_config.py::test_alignment_with_real_data`) that verifies this alignment at test time so the bug can never silently return.
+
+**3. Data leakage through augmentation during validation**
+
+After fixing the class ordering, Rice climbed to ~85%—still well below the 92% we believed was achievable. We discovered that our original `ImageFolder` setup was applying the same `transforms.Compose` pipeline to both training and validation data, meaning the validation set was receiving random horizontal flips, rotations, and colour jitter. The model was being evaluated on artificially perturbed images, degrading its apparent performance. The fix was to create two separate `ImageFolder` instances pointing to the same root directory—one wrapped in `TRAIN_TRANSFORM` (with augmentation) and one in `EVAL_TRANSFORM` (resize + normalise only)—and split them with the exact same random seed so the two views produce identical train/val/test splits. After this fix and 25 total epochs (8 head warmup + 17 fine-tuning on layer4), Rice reached 96.25% test accuracy.
+
+**4. Training reproducibility on Windows multiprocessing**
+
+A subtle platform-specific bug emerged when we increased `num_workers` from 0 to 4 for faster DataLoader performance. On Windows, the default process spawn method causes child processes to re-import the module, which re-executes any code at the module top level. Since our training loop was initially written at module level (not inside `main()`), every DataLoader worker was launching its own training run, spawning its own workers, and crashing the system with cascading subprocesses. The fix was wrapping the entire driver code inside a `main()` function with `if __name__ == "__main__":` guard—a well-known Python idiom that is mandatory on Windows when using multiprocessing-based data loading.
+
+### Technical challenges — LLM integration
+
+**5. DeepSeek reasoning model format mismatch**
 
 Our initial OpenCode model (`deepseek-v4-flash`) returned empty content strings because it is a reasoning model that places its output in `reasoning_content` rather than `content`. We discovered this by printing the full API response JSON. The fix was testing all available OpenCode models systematically (qwen3.5-plus, glm-5, kimi-k2.5, minimax-m2.5) and selecting the one with standard OpenAI-compatible output format and the highest-quality agricultural answers.
 
-**4. API key persistence across development sessions**
+**6. API key persistence across development sessions**
 
 We set `OPENCODE_API_KEY` as a Windows User environment variable, but it was not picked up by Python processes spawned from new terminal sessions. The batch file approach (`cmd /c "set KEY=... && python ..."`) worked for manual testing but was brittle. We solved this definitively by adding `python-dotenv` support to `llm_advice.py`, which loads `src/.env` on import. The `.env` file is gitignored and never committed.
 
-**5. Android keyboard obscuring the chat input**
+### Technical challenges — Android and integration
+
+**7. Android keyboard obscuring the chat input**
 
 The `LazyColumn` containing the chat did not resize when the soft keyboard opened, so the input field was hidden behind the keyboard. Solution: `Modifier.imePadding()` on the LazyColumn, plus a `LazyListState` + `LaunchedEffect` that triggers `animateScrollToItem` when new chat messages arrive.
 
-**6. Test contamination from live API keys**
+**8. Test contamination from live API keys**
 
 With the `.env` file providing a valid OpenCode API key, the fallback tests—designed to verify graceful degradation when no key is available—started receiving real LLM responses instead of triggering the fallback path. We solved this by: (a) monkeypatching `_ask_opencode` in the unit test to always raise `RuntimeError`, and (b) using a fake provider string (`"__test_only__"`) in end-to-end tests that the server rejects as unknown, forcing the fallback branch.
 
-**7. Gradle overwriting `settings.gradle.kts`**
+**9. Gradle overwriting `settings.gradle.kts`**
 
 During Android builds, Gradle sometimes stripped the Kotlin plugin declaration from `settings.gradle.kts`, causing compilation failures. The root cause was the `dependencyResolutionManagement` block interacting with the Kotlin Gradle plugin version resolution. The workaround was to `git checkout settings.gradle.kts` after affected builds.
 
 ### Learning challenges
 
 None of the team members had prior experience with Android development, Kotlin, Jetpack Compose, or CI pipeline configuration. We learned these on the fly during mob sessions, with the navigators researching documentation and examples while the driver implemented. The LLM prompt engineering—particularly grounding the model with structured treatment data to prevent hallucination—was new territory for all of us and required several iterations before we settled on the current prompt format.
+
+On the AI side, our biggest learning curve was understanding that training a CNN for real-world deployment requires far more than getting a high accuracy number on a held-out test set. The silent class-alignment bug, the augmentation leakage into validation, and the Keras-to-PyTorch framework mismatch all produced metrics that looked plausible but were misleading. We learned to validate every number with manual spot-checks—feeding specific known images through the model and verifying the predicted class made visual sense—before trusting the aggregate accuracy figure.
 
 ## Member Contribution
 
