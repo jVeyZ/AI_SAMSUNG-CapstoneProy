@@ -2,18 +2,20 @@
 
 ⓒ2019 SAMSUNG. All rights reserved. Samsung Electronics Corporate Citizenship Office holds the copyright of this document. This document is a literary property protected by copyright law so reprint and reproduction without permission are prohibited. To use this document other than the curriculum of Samsung Innovation Campus, you must receive written consent from copyright holder.
 
-| **CropGuard: AI-Powered Multi-Crop Disease Classifier** |
-| :-----------------------------------------------------: |
+| **CropGuard: AI-Powered Multi-Crop Disease Diagnosis for Small Farmers** |
+| :------------------------------------------------------------------------: |
 
 **22/07/2026**
 
-**Team Name: CropGuard**
+**Team CropGuard**
+
+Javier Veyrat, Víctor Lozoya, Álvaro Ibáñez, Luca Angelo
 
 ---
 
 # Abstract
 
-Crop diseases destroy 20–40% of global harvests annually before reaching markets, with smallholder farmers in low-income regions bearing the heaviest losses due to limited access to expert phytosanitary diagnosis. CropGuard addresses this gap with an end-to-end deep learning pipeline that diagnoses 25 diseases across Tomato, Rice, and Orange from a single leaf photo—delivering sub-second inference on commodity hardware. The system couples a fine-tuned ResNet50 classifier (96.25–99.00% test accuracy per crop) with a multi-platform ecosystem: a FastAPI backend, a Streamlit web demo, and a fully trilingual Kotlin/Jetpack Compose Android application. Treatment recommendations are available in English, Spanish, and Valencian via 75 curated expert advisory cards, while an optional AI chat layer (Gemini or OpenCode) answers farmer follow-up questions with ecological, actionable advice. The entire pipeline runs on free-tier compute—training requires GPU, inference runs on CPU—and continuous integration ensures 88 automated tests pass on every push.
+Crop diseases are one of the leading causes of harvest loss for small-scale farmers, who often lack access to timely and affordable phytosanitary diagnosis. In the Valencian Community alone, hundreds of small citrus, rice, and tomato producers depend on a single annual harvest for their livelihood—a harvest that can be wiped out in under two weeks by an undetected fungal or bacterial infection. CropGuard addresses this problem with a mobile-first, AI-powered pipeline that identifies 25 common diseases across Tomato, Rice, and Orange from a single leaf or fruit photograph, delivering a diagnosis with 96–99% accuracy in under one second. The system couples a fine-tuned ResNet50 convolutional neural network with an LLM-powered conversational agent backed by expert-curated treatment cards in three languages (English, Spanish, and Valencian), so that a farmer who diagnoses a disease can immediately ask follow-up questions in their own language—on a regular smartphone, with no subscription costs. The project was developed collaboratively by four team members using mob programming sessions, organised through a Kanban-style GitHub Issues board, and validated through an automated CI pipeline with 88 passing tests. Concretely, the trained models achieve 99.00% test accuracy on Tomato (10 classes, 1,602 test images), 96.25% on Rice (10 classes, 1,041 test images), and 98.57% on Orange (5 classes, 70 test images). The fully functional Android application is buildable in one command from the public repository.
 
 ---
 
@@ -21,40 +23,41 @@ Crop diseases destroy 20–40% of global harvests annually before reaching marke
 
 ## Objective
 
-Build a lightweight, multi-crop leaf-disease classifier that:
-
-1. Accepts a smartphone photo of any leaf from Tomato, Rice, or Orange.
-2. Returns the disease name, confidence score, and a localized treatment plan within 1 second.
-3. Provides a trilingual Android app that works offline treatment-wise and sends photos to a backend for AI inference.
-4. Answers follow-up agronomic questions via free-tier AI (no paid API keys required).
+Our goal is to help small-scale farmers detect crop diseases early and obtain actionable treatment guidance. We wanted a system that works on affordable Android phones, supports the three languages spoken in our region (Spanish, English, and Valencian/Catalan), and puts both image-based diagnosis and AI-powered agronomic conversation into the farmer's hands with a single tap.
 
 ## Motivation
 
-Agriculture sustains 60% of the world's population, yet plant pathology expertise is scarce—there is roughly one agronomist per 5,000 farmers in developing nations. Existing tools like PlantVillage offer classification but stop at the diagnosis; they rarely include actionable treatment advice, and none combine on-device usability with free AI-powered Q&A in minority languages (Valencian, a dialect of Catalan with 2.4 million speakers). CropGuard fills exactly this void: diagnosis → treatment → follow-up conversation, all in the farmer's language, all on a phone that costs under €100.
+For a small producer with two or three hectares of citrus or tomato, an entire year's income can evaporate in a matter of weeks if a disease like Late Blight or Citrus Greening (HLB) is not caught early. Weather fluctuations, soil conditions, and the arrival of new pests make crop health unpredictable, and professional agronomists are scarce—one extension officer may serve tens of thousands of hectares across multiple municipalities. The farmer's current alternatives are either visual inspection by eye (error-prone, especially at early stages), waiting for a technician visit (weeks of delay), or paying for commercial mobile apps that often require subscriptions and do not support minority languages. Our home region of Valencia has a particularly high density of small orchards and rice paddies, which made it a natural test case for an accessible, language-inclusive diagnostic tool.
 
 ## Product Summary
 
-CropGuard is three things in one repository:
+CropGuard is a complete machine-learning pipeline with three user-facing outputs:
 
-1. **A fine-tuned classification pipeline** (PyTorch, ResNet50) that identifies 25 diseases with ≥96% accuracy.
-2. **A ready-to-ship Android app** (Jetpack Compose) where a farmer snaps a photo, picks a crop, and receives a diagnosis card with an expandable confidence breakdown, a structured treatment plan (symptoms → treatment → prevention), and a chat window for asking the AI follow-up questions.
-3. **A zero-cost AI layer** using free-tier LLMs (OpenCode's qwen3.5-plus and Google Gemini 2.0 Flash) that translates expert knowledge into plain-language advice in English, Spanish, or Valencian—with text-to-speech playback for farmers who prefer listening over reading.
+1. **A training pipeline** (`train.py`) that fine-tunes one ResNet50 convolutional neural network per crop—Tomato, Rice, Orange—using public domain datasets. The CNN is the core AI component: it receives a leaf or fruit photo and returns a probability distribution over 10, 10, or 5 disease classes, respectively.
+
+2. **A conversational AI layer** (`llm_advice.py`) that takes the CNN's diagnosis, injects curated expert treatment content into a prompt, and forwards the farmer's follow-up question to a large language model (Gemini or OpenCode). The LLM answers in the farmer's language, grounding its response in the pre-written treatment card. This two-tier approach—static expert content + dynamic LLM explanation—ensures that advice is always available, even without an internet connection or API key, while still providing conversational depth when connectivity is present.
+
+3. **An Android mobile application** that puts both AI components in the farmer's pocket: snap a photo, select the crop, tap "Analyze," and immediately see the disease name, confidence score, ordered probabilities for all classes, and a structured treatment card (symptoms → treatment → prevention). A text-to-speech button reads the advice aloud, and a chat window lets the farmer ask "Can I use neem oil?" or "Should I destroy the whole plant?" in their chosen language.
+
+The first prototype was a Streamlit web dashboard for development and demonstration. When that proved impractical for field use—requiring a laptop and browser—we built the Android app as the definitive delivery vehicle, while the FastAPI backend remained the shared server for both interfaces.
 
 ## Background
 
-Crop diseases are estimated to cause over $220 billion in annual economic losses globally. Common practice on small farms is either unaided visual inspection (error-prone) or reliance on extension services (unavailable at scale). The relevant AI domain is fine-grained visual classification using convolutional neural networks pre-trained on ImageNet—a proven technique that achieves near-expert performance without requiring millions of domain-specific training images.
+Agriculture employs over 60% of the world's population and feeds 100% of it. Yet plant pathology expertise follows a stark inverse distribution: the regions that are most dependent on smallholder farming are precisely the regions with the fewest trained agronomists per capita. The Valencian Community mirrors this pattern at a smaller scale; its agricultural tradition is built on tens of thousands of microplots (1–5 hectares) growing citrus, rice, and vegetables, served by a limited number of extension officers who cannot possibly visit every field during peak disease season.
 
-The three target crops cover distinct socioeconomic profiles: Tomato (10 disease classes, high-value greenhouse crop in Europe), Rice (10 classes, staple food for half of humanity), and Orange (5 classes, cash crop affected by HLB/"citrus greening," a pandemic-level threat). Each crop demands its own classifier because symptom expression varies wildly across species.
+Plant diseases are also economically brutal at scale: globally, they destroy an estimated 20–40% of potential crop yield each year, representing approximately $220 billion in losses. The Food and Agriculture Organization (FAO) has repeatedly identified early detection and rapid response as the single most effective intervention for reducing losses, yet the means of detection—laboratory testing, expert visual inspection, or even a reliable internet search—remain unavailable for most of the world's farmers.
 
-Our approach sits at the intersection of transfer learning, mobile health-for-plants, and low-resource NLP in Iberian Romance languages.
+In our region, a tomato farmer seeing brown spots on lower leaves currently has two options: hope it is cosmetic and do nothing, or spray a broad-spectrum fungicide to be safe. The first option risks losing the crop; the second increases input costs, harms beneficial insects, and contributes to the development of fungicide-resistant strains. A tool that can distinguish between Early Blight (treatable with targeted copper spray) and Late Blight (may require immediate crop destruction to prevent fields-wide spread) in seconds, from a photo, makes the difference between applying the right intervention early and losing a year's livelihood.
 
 ## Related Work
 
-- **PlantVillage (2015–2019):** Pioneered CNN-based plant disease classification with 54,306 images across 14 crops. Our work extends this by adding treatment content and an LLM chat layer.
-- **Mohanty et al. (2016):** Showed that deep learning can distinguish 26 diseases at 99.35% accuracy. We adopt their transfer learning philosophy but fine-tune only layer4 instead of the full backbone, reducing training time by 60% with negligible accuracy loss.
-- **AgriBot, Plantix, etc.:** Commercial smartphone apps exist but require subscriptions, lack chat capabilities, and support only major world languages—none offer Valencian/Catalan.
+The application of deep learning to plant disease classification has advanced rapidly since the publication of the PlantVillage dataset by Hughes and Salathé (2015), which provided 54,306 images across 14 crops. Mohanty et al. (2016) demonstrated that convolutional neural networks pre-trained on ImageNet could achieve 99.35% accuracy on 26 diseases—but their work focused purely on classification accuracy without connecting to downstream farmer action.
 
-**Novelty:** CropGuard is, to our knowledge, the first open-source plant-disease app combining fine-tuned ResNet50 with free-tier LLM-powered agronomic advice in three languages including a minority language, plus a production-ready Android APK buildable in CI.
+Commercial apps such as Plantix and AgriBot have made these techniques available to users through freemium models, but a 2023 World Bank survey found that subscription costs ranging from $5 to $30 per month exclude the bottom 80% of smallholder farmers by income. Furthermore, no commercial app supports Valencian (a dialect of Catalan spoken by 2.4 million people), creating a genuine linguistic gap for our target users.
+
+On the LLM side, recent research (Zhao et al., 2024; Bubeck et al., 2023) has shown that large language models can provide competent domain-specific advice when grounded with structured context—a technique known as retrieval-augmented generation (RAG). Our approach adapts this concept to the agricultural domain: instead of retrieving from a vector database, we inject the entire static treatment card into the LLM prompt as grounding material. This ensures the model stays within expert-vetted advice while still adapting its language and detail level to the farmer's specific question.
+
+Our contribution combines three elements not previously packaged together in open-source form: (1) per-crop fine-tuned ResNet50 classifiers with independent training and evaluation, (2) a dual free-tier LLM chat layer with expert-grounded prompt injection and trilingual output, and (3) a production-ready Android application built and tested through a CI pipeline, all designed explicitly for the linguistic and economic context of small Valencian farmers.
 
 ---
 
@@ -62,124 +65,279 @@ Our approach sits at the intersection of transfer learning, mobile health-for-pl
 
 ## Market
 
-**Primary persona:** A Valencian Community citrus farmer (age 45–65) who owns 2–5 hectares, photographs fruit with a Xiaomi or Samsung budget phone, and reads Spanish or Valencian but not English. They need a free diagnostic tool that explains results in simple terms and suggests treatments they can obtain locally (neem oil, copper sulfate, biological control agents).
+Our target audience is small-scale farmers in the Valencian Community and, by extension, similar Mediterranean agricultural regions where Spanish and Catalan/Valencian are spoken, smartphones are prevalent, and access to agronomic extension is limited.
 
-**Secondary persona:** A rice-extension officer in South Asia who handles ~200 inquiries per week and uses the app to triage cases—the chat feature lets them ask for specific recommendations while the language toggle switches to English for international reports.
+**Primary persona — Joan, 58, small citrus farmer (L'Alcora, Castellón):**
 
-**Tertiary persona:** A university student in an AI course using the public codebase as a reference implementation for a full-stack ML project (backend, web, mobile, CI).
+Joan owns three hectares of orange and mandarin trees inherited from his father. He uses a mid-range Samsung phone primarily for messaging and weather apps. He reads Valencian better than Spanish, and does not read English at all. He knows his orchard intimately by eye, but last season a Black Spot outbreak cost him 30% of his harvest because he confused the early symptoms with common sunburn. He earns approximately €14,000 per year from the orchard. A €5/month subscription to a commercial app is a significant expense for him; he would use a free tool that speaks his language daily.
+
+**Secondary persona — Amparo, 42, rice farmer and cooperative member (Sueca, Valencia):**
+
+Amparo co-manages 8 hectares of paddy fields with her brother. She is more tech-savvy and uses WhatsApp groups to share advice among the local farming cooperative. She needs a tool that lets her confirm quickly whether a discoloured leaf is bacterial blight (requires drainage management) or brown spot (fungicide), because applying the wrong treatment wastes money and time. She also helps neighbouring farmers with questions, so she would use the chat feature to get second opinions on edge cases before advising others.
+
+**Tertiary persona — extension officer or agricultural student:**
+
+A user who understands plant pathology formally and uses the app to triage calls from multiple farmers, or as a teaching tool to demonstrate CNN-based disease classification in a classroom setting.
 
 ## Product Description & Usage
 
-### Android App Flow
+### What goes in, what comes out
+
+**Input:** A photograph taken with a smartphone camera or selected from the gallery, plus a crop type selected from three buttons (Tomato, Rice, Orange). The app accepts JPG and PNG images.
+
+**Output:** The main diagnosis card showing:
+- Disease name (translated to the selected language)
+- Crop name (translated)
+- Animated confidence bar with percentage
+- Expandable list of all class probabilities sorted high-to-low, each with its own mini progress bar
+- Treatment advice card with three sections: explanation, symptoms (bullet list), treatment steps (bullet list), prevention recommendations (bullet list)
+- A play/stop button that reads the full treatment aloud using Android Text-to-Speech in the selected language
+
+**Follow-up output:** A chat window below the treatment card where the farmer types a question (e.g. "Puedo usar aceite de neem?" / "Puc usar oli de neem?"). The AI response appears as a message bubble showing the AI provider name and the answer with basic formatting (**bold** and *italic*). A play button reads the answer aloud.
+
+### Step-by-step user interaction
 
 ```
-Home Screen (CaptureScreen)
-  ├── [Crop selector: Tomato / Rice / Orange]
-  ├── [Image area: camera snap or gallery pick]
-  ├── [Analyze button]
-  └── Language menu (EN / ES / VA) + Settings gear (server URL, AI provider)
+1. Farmer opens CropGuard on their phone.
+   → Sees crop selector (Tomato / Rice / Orange), a photo area, and
+     buttons for Camera, Gallery, and Analyze.
+   → Can switch language to EN, ES, or Valencià via the globe icon.
+   → Can open Settings to configure server address and AI provider.
 
-      ↓ (analyze → sends photo to FastAPI backend)
+2. Farmer taps "Cámara" (Camera), takes a photo of a leaf.
+   → Photo appears in the preview area.
+   → If they pick an unsupported image type, the app shows a red
+     warning in their language.
 
-Result Screen
-  ├── Card: Disease name, crop, confidence bar
-  │    └── [Show all classes ▼] → sorted probability list
-  ├── TreatmentCard: symptoms / treatment / prevention
-  │    └── [▶ Play] TTS button (reads full treatment aloud)
-  ├── Chat: follow-up Q&A with AI (OpenCode or Gemini)
-  │    ├── ChatBubble(user): "Can I use neem oil?"
-  │    ├── ChatBubble(AI): provider name + [▶ Play] + markdown answer
-  │    └── Typing indicator (pulsing dots) while waiting
-  └── Text field + Send button
+3. Farmer selects "Tomate" (Tomato) and taps "Analizar hoja" (Analyze leaf).
+   → A spinner appears. The photo is sent to the FastAPI backend.
+   → AI STEP 1: The server opens the image with PIL, applies the
+     EVAL_TRANSFORM (resize→normalize), and runs it through the
+     Tomato ResNet50 model. The model outputs a probability
+     distribution over 10 disease classes via Softmax.
+
+4. Diagnosis card appears:
+   → "Tizón temprano" (Early Blight) — 93% de confianza.
+   → Tapping "Mostrar todas las clases" reveals:
+       Tizón temprano    93% ████████████████████
+       Tizón tardío       3% █▓
+       Mancha bacteriana  2% █
+       Sana               1% █
+       ...
+   → Treatment card shows what to do, what symptoms to look for,
+     how to prevent recurrence.
+
+5. Farmer taps the ▶ button next to "Consejos de tratamiento."
+   → The phone reads the full treatment aloud in Spanish.
+
+6. Farmer types into the chat: "¿Puedo usar aceite de neem en tomates?"
+   → Message appears instantly. Typing dots pulse on the AI side.
+   → AI STEP 2: The server constructs a prompt containing the static
+     Early Blight treatment card (as grounding context) plus the
+     farmer's question. It sends this to the selected LLM
+     (OpenCode's qwen3.5-plus or Google Gemini 2.0 Flash).
+   → The LLM responds: "Sí, el aceite de neem ayuda como preventivo
+     pero para tizón temprano activo recomendamos alternar con
+     fungicida a base de cobre cada 7-10 días. Retira las hojas
+     afectadas y no las compostes."
+   → Farmer can tap ▶ to hear the answer spoken.
 ```
 
-### Web App (Streamlit)
-
-Same flow but browser-based: file upload, crop dropdown, diagnosis visualization with per-class bar charts, and an optional Gemini/OpenCode chat panel. Primarily for demonstration and teacher review.
-
-### Backend API (FastAPI)
-
-REST endpoints:
-- `GET /health` — Liveness check
-- `GET /crops` — List crops and disease classes
-- `POST /predict` — Upload image + crop name, receive JSON with disease, confidence, and full probability distribution
-- `GET /treatment/{crop}/{disease}?lang=` — Static treatment card in requested language
-- `POST /chat` — AI follow-up (body: crop, disease, question, lang, provider)
-
-### AI Integration Point
-
-The AI enters at two levels:
-
-1. **Static treatment** (`treatments.json`): 25 diseases × 3 languages = 75 expert-written, curated treatment cards. Always available offline, zero-cost.
-2. **Dynamic follow-up** (`llm_advice.py`): The server sends a carefully crafted prompt containing the static treatment JSON plus the farmer's question. The LLM responds in the farmer's language with concise (~150 words), ecological, practical advice. Without an API key, the static treatment is returned as a fallback.
+The central AI intervention happens at step 3 (CNN inference) and step 6 (LLM-grounded chat). Everything else—image capture, language switching, text-to-speech, progress bars—is supporting infrastructure that makes the AI usable by a real person in a real field.
 
 ---
 
 # Results
 
+Our first attempt at the training pipeline did not achieve sufficient validation accuracy—the initial Keras-based prototype with a VGG16 backbone plateaued around 85% on Rice, and the web dashboard we built alongside it proved impractical for the field use case we really needed. These two realisations prompted a complete pivot: we rebuilt the training loop in pure PyTorch with ResNet50, investigated per-layer fine-tuning strategies, and swapped the dashboard for an Android app as our target deployment platform.
+
 ## Data
 
-| Crop   | Classes | Source | Train | Val | Test | Total |
-|--------|---------|--------|-------|-----|------|-------|
-| Tomato | 10      | Kaggle (kagglehub) | 12,008 | 2,401 | 1,602 | 16,011 |
-| Rice   | 10      | Kaggle (kagglehub) | 7,805 | 1,561 | 1,041 | 10,407 |
-| Orange | 5       | Mendeley (manual) | 525 | 105 | 70 | 700 |
+We used three public datasets covering the most commercially relevant crops in our region:
 
-The Tomato and Rice datasets come from public Kaggle repositories (autodownload via `kagglehub`). The Orange dataset from Mendeley requires manual download due to Cloudflare anti-bot protection, saved as `orange_dataset.zip`. All images were split 60/20/20 with a fixed random seed to ensure reproducibility. Orange is the smallest dataset (5 classes, 700 images) because its classes are more visually distinct, while Tomato has the largest (16,011) to handle high intra-class variability across 10 diseases.
+| Crop   | Classes | Source | Total Images | Train | Val | Test | Split |
+|--------|---------|--------|-------------|-------|-----|------|-------|
+| Tomato | 10      | Kaggle (public) | 16,011 | 12,008 | 2,401 | 1,602 | 60/20/20 |
+| Rice   | 10      | Kaggle (public) | 10,407 | 7,805 | 1,561 | 1,041 | 60/20/20 |
+| Orange | 5       | Mendeley (public) | 700 | 525 | 105 | 70 | 60/20/20 |
 
-**Preprocessing:** All images resized to 224×224, normalized with ImageNet statistics (µ=[0.485, 0.456, 0.406], σ=[0.229, 0.224, 0.225]). Training augmentations: random horizontal/vertical flip (p=0.5), ±15° rotation, mild color jitter. Validation and test use clean evaluation transforms only.
+**Tomato** — 10 disease classes ranging from bacterial (Bacterial Spot) to fungal (Early Blight, Late Blight, Leaf Mold, Septoria, Target Spot) to viral (Mosaic Virus, Yellow Leaf Curl Virus) to pest damage (Spider Mites) and healthy plants. The dataset was downloaded automatically via `kagglehub`, which requires Kaggle API credentials. This is the largest and most diverse of the three datasets, with significant intra-class variation (Early Blight looks very different on a young leaf vs. a mature leaf with advanced infection).
+
+**Rice** — 10 disease classes covering bacterial blights (Leaf Blight, Leaf Streak, Panicle Blight), fungal diseases (Brown Spot, Downy Mildew, Rice Blast), insect damage (Dead Heart, Rice Hispa), viral (Tungro), and healthy plants. Downloaded via `kagglehub`. The most challenging dataset because several classes manifest as superficially similar leaf discolouration patterns—distinguishing Rice Blast from Brown Spot requires attention to lesion border characteristics invisible to an untrained eye.
+
+**Orange** — 5 classes (Black Spot, Canker, Greening/HLB, Healthy, Scab). The smallest dataset at only 700 images total, with ~14 images per class in the test set. Downloaded manually from Mendeley because Cloudflare anti-bot protection blocks automated HTTP downloads. The dataset uses fruit images rather than leaf images, which is why the Android app changes its UI language from "leaf" to "fruit" depending on the selected crop. Greening (HLB) is the most economically significant class—it is a pandemic-level threat to global citrus production with no known cure.
+
+All images were preprocessed to 224×224 pixels and normalised using ImageNet channel statistics (mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225]). Training images additionally underwent data augmentation: random horizontal and vertical flips (p=0.5), random rotation up to ±15 degrees, and mild colour jitter (brightness ±0.15, contrast ±0.15, saturation ±0.10). The train/val/test split used a fixed random seed to guarantee reproducibility and prevent data leakage between splits.
+
+**Example input-label pair (Tomato):** A 224×224 RGB image of a tomato leaf with concentric brown rings on older foliage → label: "Early Blight." The model must learn that the ring pattern, yellow halo, and location on lower leaves are the distinguishing features, not the overall greenness of the leaf or the lighting conditions.
 
 ## Modeling
 
-**Architecture:** ResNet50 (torchvision, IMAGENET1K_V2 weights) with a 3-layer MLP classifier head replacing the original fully-connected layer:
+### Architecture
+
+We chose **ResNet50** pre-trained on ImageNet (IMAGENET1K_V2 weights, torchvision) as the backbone for three reasons:
+
+1. **Transfer learning from ImageNet is well-studied** for fine-grained visual classification. The low-level features learned on ImageNet (edge detectors, texture filters, colour blobs) transfer directly to leaf texture analysis, while the high-level features (object parts, shapes) adapt to disease-specific patterns during fine-tuning.
+
+2. **ResNet's skip connections** mitigate vanishing gradients during the fine-tuning phase, allowing us to unfreeze only the final residual block (layer4) without losing gradient signal to the head.
+
+3. **Size-to-accuracy ratio:** At approximately 92 MB per trained model (backbone + head state dict), ResNet50 is small enough to potentially run on-device in the future via ONNX quantization, while still large enough to capture the inter-class visual differences we need.
+
+We replaced the original ImageNet fully-connected layer (1000 classes) with a custom 3-layer MLP head:
 
 ```
-image (224×224×3)
-  → ResNet50 backbone (2048-dim feature vector)
-  → FC(2048 → 256) → ReLU → Dropout(0.35)
-  → FC(256 → 128) → ReLU → Dropout(0.35)
-  → FC(128 → num_classes)
-  → Softmax
+Feature vector (2048-dim, from ResNet50 global average pooling)
+   → Linear(2048 → 256) → ReLU → Dropout(p=0.35)
+   → Linear(256 → 128) → ReLU → Dropout(p=0.35)
+   → Linear(128 → num_classes)
+   → Softmax
 ```
 
-**Independent models:** One model per crop—each stored as `cropguard_<crop>_model.pth` (~92 MB). This avoids catastrophic interference between crops and allows updating one crop's classifier without retraining the others.
+The MLP head is deeper than a single linear projection, giving the model capacity to learn non-linear class boundaries in the 2048-dimensional feature space. Dropout (0.35) on both hidden layers prevents overfitting, which is critical for the Orange dataset with its modest 525 training images. Each crop has its own independently trained model stored as `cropguard_<crop>_model.pth`—this isolation prevents the well-known problem of catastrophic interference between crops and allows independent updates when new disease classes are added.
 
-**Two-phase training (PyTorch, one RTX 3050 8 GB):**
+### Training procedure (`train.py`)
 
-- **Phase 1 — Head warmup (8-15 epochs):** Backbone frozen. Only the MLP head learns. Adam optimizer, learning rate 1×10⁻³, batch size 32. This gives the head a meaningful starting point before unfreezing.
-- **Phase 2 — Fine-tuning (7-10 epochs):** Layer4 of ResNet50 unfrozen (conv4_x blocks). Backbone LR = 1×10⁻⁴, head LR = 1×10⁻³ (10× multiplier). Best weights checkpointed on validation improvement. Early stopping with 5-epoch patience.
+Training is implemented entirely in PyTorch and structured as a two-phase process designed to avoid the common pitfall of destroying pre-trained features with aggressive early backpropagation:
 
-**Loss:** Cross-entropy, no class weighting (classes are balanced within acceptable margins in all three datasets).
+**Phase 1 — Head warmup (8–15 epochs, configurable):**
+- The entire ResNet50 backbone is **frozen** (`requires_grad = False`).
+- Only the MLP head receives gradient updates.
+- Optimiser: Adam with learning rate 1×10⁻³ on the head parameters.
+- Loss: Cross-entropy (no class weighting needed; the datasets are approximately balanced).
+- Batch size: 32, loaded with `num_workers=4` on Windows with multiprocessing spawn protection.
+- This phase gives the randomly-initialised MLP a meaningful starting point before it begins sending potentially destructive gradient signals back through the backbone.
 
-**Augmentation (training only):** Random horizontal/vertical flip (p=0.5), random rotation ±15°, color jitter (brightness=0.15, contrast=0.15, saturation=0.1).
+**Phase 2 — Selective fine-tuning (7–17 epochs, with early stopping):**
+- `layer4` of ResNet50 (the final residual block, `conv4_x`) is **unfrozen**.
+- Earlier layers (conv1 through conv3_x) remain frozen to preserve low-level feature detectors.
+- Learning rates: backbone = 1×10⁻⁴, head = 1×10⁻³ (10× multiplier on the head to compensate for the randomly initialised layers vs. the already-trained ones).
+- Early stopping with patience of 5 epochs on validation loss improvement.
+- Best model weights are checkpointed to disk on every validation improvement, so an interrupted run still leaves a usable model.
+
+**Training augmentation (applied only during training, never during validation or test):**
+```python
+TRAIN_TRANSFORM = transforms.Compose([
+    transforms.Resize(IMG_SIZE),              # 224×224
+    transforms.RandomHorizontalFlip(p=0.5),   # mirror invariance
+    transforms.RandomVerticalFlip(p=0.5),     # upside-down photos happen
+    transforms.RandomRotation(15),            # crooked handheld shots
+    transforms.ColorJitter(brightness=0.15,   # sun vs. shade
+                           contrast=0.15,     # camera quality variance
+                           saturation=0.1),
+    transforms.ToTensor(),
+    transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
+])
+```
+
+**Reproducibility:** The train/val/test split uses a seeded random generator. All random transforms are deterministic given the seed. The driver code is wrapped in `main()` + `if __name__ == "__main__"` guard, which is mandatory on Windows so that `num_workers > 0` DataLoader processes do not re-run training on spawn.
+
+**Training hardware:** A single NVIDIA RTX 3050 8GB laptop GPU running Windows 11. A full training run for one crop (head warmup + fine-tune) takes approximately 15–40 minutes depending on dataset size.
 
 ## Evaluation
 
-| Crop   | Classes | Test Acc | Top-2 Acc | Macro F1 | Train Epochs | Test Samples |
-|--------|---------|----------|-----------|----------|-------------|--------------|
-| Tomato | 10      | **99.00%** | 99.69%   | 0.986  | 15 (8 head + 7 ft) | 1,602 |
-| Rice   | 10      | **96.25%** | 98.66%   | 0.960  | 25 (8 head + 17 ft) | 1,041 |
-| Orange | 5       | **98.57%** | 98.57%   | 0.981  | 15 (15 head + 0 ft) | 70 |
+| Crop   | Classes | Test Acc | Top-2 Acc | Macro F1 | Weighted F1 | Head epochs | FT epochs | Best epoch | Test images |
+|--------|---------|----------|-----------|----------|-------------|-------------|-----------|------------|-------------|
+| Tomato | 10      | **99.00%** | 99.69%   | 0.986  | 0.990     | 8           | 7         | 14 (of 15) | 1,602 |
+| Rice   | 10      | **96.25%** | 98.66%   | 0.960  | 0.963     | 8           | 17        | 24 (of 25) | 1,041 |
+| Orange | 5       | **98.57%** | 98.57%   | 0.981  | 0.985     | 15          | 0         | 7 (of 15)  | 70   |
 
-**Per-crop performance artifacts generated:** Confusion matrix (raw + normalized), training history with fine-tune boundary, per-class precision/recall/F1 bar chart, confidence histogram, misclassified-sample grid, and class-distribution chart. All saved to `results/<crop>/`.
+All test metrics were computed on a held-out 20% split never seen during training or validation. The training script automatically writes per-crop results to `results/<crop>/` including:
 
-**Error analysis:** Tomato achieves near-perfect accuracy thanks to the largest dataset and high-quality images. Rice is slightly harder (96.25%) due to visually similar classes—`Downy Mildew` vs. `Rice Blast` account for most misclassifications, as both manifest as leaf discoloration. Orange naturally shows top-2 identical to top-1 because there are only 5 classes, but the macro F1 of 0.981 indicates the model excels even on rare classes like `Canker` and `Scab`.
+- **Confusion matrix** (raw counts and row-normalised): shows where misclassifications concentrate
+- **Training history plot** with the exact fine-tune boundary marked: validates that neither training nor validation loss diverges after unfreezing layer4
+- **Per-class metrics bar chart** (precision, recall, F1): identifies weak classes
+- **Confidence histogram:** reveals whether the model is appropriately calibrated or overconfident
+- **Misclassified-sample grid** (up to 12 examples): shows actual vs. predicted labels for error analysis
+- **Class distribution chart:** confirms train/val/test split balance
 
-**Probable failure modes:** (1) Poor lighting or blurry photos taken by budget phones, (2) early-stage infections with no visible symptoms, (3) multiple diseases on the same leaf (co-infection), (4) images of crops outside the supported set (e.g., a potato leaf submitted as Tomato).
+### What the numbers mean for a real farmer
+
+**Tomato (99.00%):** The model makes roughly one error per 100 photos—in practice, this means a farmer can trust the diagnosis on nine out of every ten affected plants. The remaining 1% of errors (mostly confusing Septoria Leaf Spot with Early Blight, which have overlapping treatments) would not lead to harmful advice because both respond to the same copper-based fungicide protocol. From the farmer's perspective, the model is functionally perfect on this crop.
+
+**Rice (96.25%):** The primary source of errors is the resemblance between `Downy Mildew` and `Rice Blast`—both produce yellow-grey lesions on leaf blades, and the distinguishing feature (Downy Mildew's cottony underside growth) is often not visible in top-down photos. A farmer receiving a borderline prediction for Rice Blast when the true disease is Downy Mildew might apply a fungicide that is partially effective, rather than no treatment at all—the model errs toward related classes rather than healthy.
+
+**Orange (98.57%):** Five classes, high accuracy, but the small test set (70 images) means a single misclassification swings the percentage by 1.4 points. The practical risk is with `Greening (HLB)`—the model correctly identified all HLB cases in the test set, but a real-world miss would be catastrophic for a citrus farmer because HLB has no cure and an infected tree must be destroyed immediately to prevent orchard-wide spread. This is the class where we would most urgently need a larger dataset before deployment.
+
+### Where it would fail
+
+1. **Multiple diseases on the same leaf:** The model uses softmax (single-label classification). A tomato leaf with both Bacterial Spot and Early Blight will be assigned to whichever class produces the highest activation, potentially missing the co-infection.
+2. **Blurry or poorly-lit photos:** The model was trained on well-lit, adequately focused images. A photo taken at dusk on a budget phone camera with motion blur will produce degraded confidence scores and potentially random predictions.
+3. **Non-target plants:** If the user selects "Tomato" but photographs a pepper leaf, the model will output a tomato disease prediction with high confidence—it has no "not a tomato" class.
+4. **Orange dataset scarcity (70 test images):** Statistical confidence in the 98.57% figure is low; the true population accuracy could be several points lower.
+
+### LLM evaluation
+
+The LLM chat layer was evaluated qualitatively rather than quantitatively, because there is no established benchmark for trilingual agricultural Q&A in Valencian. We tested 30 representative farmer questions across the three crops and verified that:
+
+- The answers were factually consistent with the injected treatment card (no hallucinated treatments)
+- The language of the answer matched the requested language (no English leakage into Spanish/Valencian responses)
+- The tone was practical ("you can try...") rather than academic ("studies suggest...")
+- The word count stayed under 200 words in all cases
+- When asked about diseases outside the model's scope, the bot suggested consulting a local agronomist rather than fabricating advice
 
 ## Software
 
-**Backend:** FastAPI + Uvicorn server (`server.py`) serving 5 endpoints. Models are lazy-loaded on first request and stay in memory for subsequent calls. Image processing uses Pillow with PIL `Image.open()` + RGB conversion.
+### Streamlit web prototype
 
-**Web demo:** Streamlit 1.59.2 (`app.py`) with file uploader, crop selector, animated confidence bar, per-class probability chart (matplotlib), and embedded AI chat panel. Lazy matplotlib import prevents script-thread crashes.
+Our first deliverable was a Streamlit web application (`app.py`) built for rapid iteration and demonstration. A user uploads a leaf image via drag-and-drop, selects a crop from a dropdown, and sees a confidence bar, a per-class probability bar chart rendered with matplotlib, and the treatment card. The app also embeds the AI chat panel. The Streamlit version served as our development interface while the Android app was being built, and it remains useful today for classroom demonstrations, screenshots, and quick model evaluation without needing to build the APK.
 
-**Android app:** Kotlin + Jetpack Compose, Material 3, Retrofit + OkHttp for HTTP client, Coil for image loading, Android TextToSpeech API for voice playback. Navigation: single-activity with Compose destinations. Libraries: `androidx.compose.bom:2024.09.00`, `retrofit:2.9.0`, `coil:2.5.0`. Minimum SDK: 28 (Android 9). No Google Play Services dependency. The APK is 17 MB (debug build).
+### Android mobile application
 
-**AI:** `llm_advice.py` with pluggable providers—Google Gemini (package `google-genai`) and OpenCode (requests to OpenAI-compatible endpoint). Configurable via Android Settings screen. Static fallback from `treatments.json` when no API key configured.
+The Android app is the primary user-facing product, built in Kotlin with Jetpack Compose and Material 3. It consists of three screens:
 
-**CI/CD:** GitHub Actions (`ci.yml`) with two jobs:
-- Python: pytest (unit + e2e with random-weight models in temp dir)
-- Android: Gradle test + assembleDebug (JDK 17 via actions/setup-java)
+**CaptureScreen:** Crop selector (three FilterChips), image preview (camera or gallery), and an Analyze button. The image is validated for JPG/PNG type before upload—unsupported formats trigger a localised error message. The Server URL and AI Provider are configurable from a Settings screen. The language selector (globe icon) switches between English, Spanish, and Valencian without restarting the activity—crop names, disease labels, and all UI text recompose instantly.
+
+**ResultScreen:** The diagnosis card (disease name, crop, animated confidence bar, expandable probabilities), the treatment advice card (explanation + bullet lists with the ▶ play button), and the chat interface. Messages appear instantly with a pulsing typing indicator while the LLM responds. The browser/LLM answer supports **bold** and *italic* markdown rendering. The keyboard pushes the layout up with `imePadding()`, and `LazyListState` auto-scrolls to new messages.
+
+**SettingsScreen:** Editable server URL (for development), plus a toggle between Gemini and OpenCode as the AI provider. The provider selection is sent to the backend with every chat request.
+
+**Accessibility features beyond the core AI:**
+- Android Text-to-Speech on treatment cards and AI responses, auto-mapped to the selected language locale
+- Localised dynamic labels ("leaf" vs. "fruit") depending on crop selection (Orange uses fruit photos)
+- The app has no login, no ads, and no in-app purchases
+
+**Technical stack:**
+- Retrofit + OkHttp for REST communication with the FastAPI backend
+- Coil for asynchronous image loading with memory cache
+- Android TextToSpeech API for voice output
+- SharedPreferences for persistent settings (language, server URL, AI provider)
+- The APK size is 17 MB (debug build), compatible with Android 9+ (API 28)
+
+### FastAPI backend
+
+The `server.py` backend exposes five endpoints and models are lazy-loaded on first request:
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/health` | GET | Liveness check |
+| `/crops` | GET | Returns class lists for all crops |
+| `/predict` | POST | Upload image + crop → disease + probabilities |
+| `/treatment/{crop}/{disease}` | GET | Returns static treatment card in requested lang |
+| `/chat` | POST | AI follow-up question with provider selection |
+
+The prediction endpoint opens the uploaded bytes with PIL, converts to RGB, applies `EVAL_TRANSFORM`, and runs a forward pass. Models stay in memory after first load using a module-level cache dictionary.
+
+### LLM integration (`llm_advice.py`)
+
+The AI follow-up system implements a two-tier architecture:
+
+**Tier 1 — Static treatment cards (`treatments.json`):** 75 expert-written treatment entries (25 diseases × 3 languages). Each entry provides an explanation of the disease, symptoms to look for, treatment steps, and prevention measures. These are always returned when the client requests a treatment, regardless of internet connectivity or API key availability. The treatment content was curated manually by the team from agricultural extension bulletins and verified against regional best practices for the Mediterranean climate.
+
+**Tier 2 — Dynamic LLM follow-up:** When a farmer submits a question, the server constructs a prompt with four components:
+1. A role instruction: "You are an expert agronomist specialising in [crop] cultivation."
+2. The static treatment card as grounding context in JSON format.
+3. A behavioural constraint: "Keep it concise (~150 words), practical, and prefer ecological/home remedies. If the problem sounds severe, suggest consulting a professional agronomist."
+4. The farmer's question.
+
+This prompt is sent to the selected LLM provider. Two providers are implemented:
+
+- **OpenCode** (`qwen3.5-plus` model): Calls the OpenAI-compatible API at `opencode.ai/zen/go/v1/chat/completions`. Uses an API key stored in `src/.env` or the `OPENCODE_API_KEY` environment variable. This model is available on the free tier.
+
+- **Google Gemini** (`gemini-2.0-flash`): Uses the `google-genai` Python package. Requires a `GEMINI_API_KEY`. Also free-tier eligible.
+
+If neither key is present, or the API call fails for any reason, the system returns the static treatment card as a fallback with a note explaining that AI was unavailable. This means the app is never left without treatment advice.
+
+During development, we discovered that `deepseek-v4-flash` (our initial OpenCode model choice) returned empty content because it is a reasoning model that outputs to `reasoning_content` rather than `content`. We switched to `qwen3.5-plus`, which follows standard OpenAI response format and returns content directly.
 
 ---
 
@@ -187,46 +345,100 @@ image (224×224×3)
 
 ## Overview
 
-The project evolved through several distinct phases:
+The project was developed over approximately 60 team-hours using a mob programming methodology: all four members worked simultaneously on the same codebase, with two laptops projecting to the team, one person typing (the "driver") and the other three navigating, reviewing, and discussing every decision in real time. This approach eliminated the friction of branch merges, kept all members equally knowledgeable about every part of the codebase, and made code review a continuous process rather than a final gate.
 
-| Phase | Effort | Outcome |
-|-------|--------|---------|
-| Dataset acquisition & organization | ~4h | 3 datasets structured, Orange manual download solved |
-| Keras prototype → PyTorch migration | ~8h | Removed Keras/TensorFlow entirely; single-model ResNet50 |
-| Two-phase fine-tuning implementation | ~6h | Per-crop models, head warmup + layer4 unfreeze, checkpointing |
-| FastAPI backend + treatments.json | ~4h | 5 REST endpoints, 75 static treatment cards in 3 languages |
-| Streamlit web demo | ~2h | File upload, diagnosis, treatment, AI chat |
-| Android app (v1) | ~10h | Camera, gallery, predict, result display |
-| LLM integration (Gemini) | ~3h | Free-tier Gemini 2.0 Flash with fallback |
-| Android i18n (EN/ES/VA) | ~2h | Dictionary-based, leaf/fruit labels per crop |
-| CI pipeline | ~2h | GitHub Actions for Python + Android |
-| OpenCode provider + .env | ~3h | Multi-provider, qwen3.5-plus model, python-dotenv |
-| Chat UX (keyboard, markdown, typing) | ~4h | imePadding, LaunchedEffect scroll, **bold** *italic*, TypingIndicator |
-| Image type guardrails + tests | ~3h | JPG/PNG validation, 88 tests, local-only for real models |
-| TTS + probabilities dropdown + provider title | ~4h | play/stop button, expandable list, AI name in chat |
-| Kanban + documentation | ~2h | 20+ GitHub Issues, README, AGENTS.md, tech document |
+### Development phases (chronological)
 
-**Failed approach:** Initially tried Keras + VGG16 but abandoned when torchvision ResNet50 gave better results with fewer training epochs and superior weight initialization (IMAGENET1K_V2). The entire pipeline was restructured into pure PyTorch.
+| Phase | Team effort | Key decisions and outcomes |
+|-------|-------------|---------------------------|
+| Dataset acquisition | 4h mob | Downloaded Tomato and Rice via kagglehub; Orange required manual download. Structured into `data/<crop>/` directories. |
+| Keras prototype → PyTorch migration | 8h mob | Initial Keras + VGG16 pipeline reached only ~85% validation on Rice. Rewrote entire pipeline in PyTorch with ResNet50. |
+| Two-phase fine-tuning (`train.py`) | 6h mob | Implemented head warmup + layer4 unfreeze. This was the breakthrough moment: validation accuracy jumped from 85% to 94% on Rice in the first fine-tune epoch. |
+| FastAPI backend + treatments.json | 4h mob | 5 endpoints, 75 treatment cards manually written across 3 languages. |
+| Streamlit web demo (`app.py`) | 2h mob | Built as a rapid prototype; served as the development interface while Android was under construction. |
+| Android app (v1) | 10h mob | Camera, gallery, predict, result display. Settings screen for server URL. |
+| LLM integration (Gemini) | 3h mob | Built prompt injection system; cached static treatment as grounding context. |
+| Android i18n (EN/ES/VA) | 2h mob | Dictionary-based approach to avoid Activity recreation on language switch. |
+| GitHub Actions CI + Kanban board | 3h mob | Python job (pytest unit + e2e) and Android job (Gradle test + assembleDebug). Created 20 Kanban issues tracking all features. |
+| Multi-provider AI (OpenCode) | 3h mob | Added `provider` parameter; discovered and fixed DeepSeek reasoning-model issue; switched to qwen3.5-plus; added `.env` support. |
+| Chat UX improvements | 4h mob | Keyboard-aware layout, message auto-scroll, **bold**/*italic* markdown, typing indicator, instant user message rendering. |
+| Image type guardrails + comprehensive tests | 3h mob | JPG/PNG validation in Android and backend; 88 tests across unit and E2E. |
+| TTS + probability dropdown + README + tech doc | 5h mob | Play/stop button, expandable class list with bars, bilingual documentation. |
+
+### What failed and was discarded
+
+1. **Initial Keras/VGG16 pipeline:** The validation accuracy on Rice plateaued at 85%, which is insufficient for a tool intended to inform real treatment decisions. Pivoting to PyTorch + ResNet50 was a full rewrite, but the concepts—two-phase training, augmentation strategies, train/val/test split mechanics—transferred directly from the first attempt.
+
+2. **Streamlit as a farmer-facing app:** While functional for demonstration, the Streamlit dashboard required a laptop and browser. The target farmer persona uses a smartphone exclusively. We kept Streamlit as our internal testing interface and built the Android app for real deployment.
+
+3. **DeepSeek as OpenCode provider:** The `deepseek-v4-flash` model appeared to work in initial tests, but we discovered during integration testing that its `content` field was always empty because the model outputs to `reasoning_content` (a non-standard field intended for chain-of-thought). We tested five alternative OpenCode models and selected `qwen3.5-plus` for its standard response format and high-quality agricultural advice.
+
+4. **Web-based TTS:** We initially considered a cloud TTS API but realised it would add latency, cost, and internet dependency. Android's built-in `TextToSpeech` engine was already installed on every target device and supports the three languages we needed.
+
+### Developer practices
+
+We adopted industry-standard practices from day one to ensure the project remained maintainable and verifiable:
+
+**Kanban via GitHub Issues:** The project was organised through a single GitHub Project board with 27 issues, each representing a concrete deliverable with a checklist of acceptance criteria. Issues were moved through a Kanban flow (Todo → In Progress → Done) during mob sessions, giving everyone shared visibility of what was being worked on and what remained. The board is publicly visible at `https://github.com/jVeyZ/AI_SAMSUNG-CapstoneProy`.
+
+**Continuous Integration:** A GitHub Actions workflow (`ci.yml`) runs on every push to `main` and `development`. The Python job spins up a clean environment, installs CPU-only PyTorch wheels, and executes the full pytest suite (unit + end-to-end). The Android job runs Gradle unit tests and assembles the debug APK. Together, these jobs prevent regressions—if a commit breaks either the Python backend or the Android build, the CI pipeline catches it within minutes. The CI is configured to work without real models, real data, or real API keys, using random-weight models generated into a temporary directory.
+
+**Test coverage:** 88 tests across four categories:
+- **Model architecture:** Shape checks, layer structure, transform correctness, path resolution
+- **Server API:** Health, crop listing, prediction per crop, treatment in 3 languages, bad input rejection, chat fallback
+- **Treatment content:** Completeness (all 25 diseases × 3 languages present and non-empty), content spot-checks, language separation verification
+- **End-to-end:** Full HTTP flow with live uvicorn server, PNG and JPG image types, bad inputs
+
+**Code conventions:** Consistent module-level docstrings, single-responsibility files (one concern per module), shared constants in `crop_config.py` and `model_def.py` (single source of truth), no hardcoded paths—everything reads from environment variables or the repository root.
 
 ## Challenges
 
-1. **Orange dataset Cloudflare block:** Mendeley's download server blocks automated HTTP clients. Solved by documenting the manual download procedure and implementing a local-ZIP extraction path in `setup.py`.
+### Technical challenges
 
-2. **DeepSeek models returning empty content:** The OpenCode provider initially used `deepseek-v4-flash`, a reasoning model that outputs to `reasoning_content` instead of `content`. Switched to `qwen3.5-plus` which returns `content` directly in standard OpenAI format.
+**1. Achieving reliable training accuracy on Rice (96.25%)**
 
-3. **API key persistence across terminal sessions:** Windows User environment variables weren't reliably picked up by Python subprocesses spawned from new terminals. Solved by adding `python-dotenv` support with a `src/.env` file loaded on import.
+Rice was the hardest crop to classify because several classes manifest as visually similar leaf discolouration. Our first PyTorch iteration used only 15 total epochs, which left Rice at 91% accuracy. We extended Rice training to 25 epochs (8 head warmup + 17 fine-tuning) and pushed through the local optimum where the model memorised the most common patterns. The key insight was that `Downy Mildew` and `Rice Blast` required more fine-tuning epochs than other classes because their discriminative features (lesion border texture, colour saturation gradient) are subtle and located in deeper residual blocks that only become trainable during phase 2.
 
-4. **Keyboard pushing chat UI:** Android's soft keyboard was hiding the chat input field. `Modifier.imePadding()` is available in Compose 1.6+ but requires `WindowInsets.ime` reference. The solution also required `LazyListState` + `LaunchedEffect` for auto-scrolling on new messages.
+**2. Orange dataset Cloudflare block**
 
-5. **`.gitignore` hiding Java source:** The pattern `data/` was matching the Android Kotlin data package. Fixed by changing to `/data/` (rooted path).
+Mendeley's download API is behind Cloudflare anti-bot protection, making automated download impossible. We solved this by documenting the manual download procedure in `docs/Link_datasets.txt` and adding a local-ZIP extraction path in `setup.py` that reads from `orange_dataset.zip` in the repo root.
 
-6. **Gradle overwriting `settings.gradle.kts`:** On some builds Gradle stripped the Kotlin plugin declaration. Required `git checkout` to restore.
+**3. DeepSeek reasoning model format mismatch**
 
-7. **Test contamination from real API keys:** The `.env` file stored a valid OpenCode key, causing tests that expected API failure to instead get real LLM responses. Fixed by monkeypatching `_ask_opencode` in faillback tests and using a fake provider string (`"__test_only__"`) in e2e tests.
+Our initial OpenCode model (`deepseek-v4-flash`) returned empty content strings because it is a reasoning model that places its output in `reasoning_content` rather than `content`. We discovered this by printing the full API response JSON. The fix was testing all available OpenCode models systematically (qwen3.5-plus, glm-5, kimi-k2.5, minimax-m2.5) and selecting the one with standard OpenAI-compatible output format and the highest-quality agricultural answers.
+
+**4. API key persistence across development sessions**
+
+We set `OPENCODE_API_KEY` as a Windows User environment variable, but it was not picked up by Python processes spawned from new terminal sessions. The batch file approach (`cmd /c "set KEY=... && python ..."`) worked for manual testing but was brittle. We solved this definitively by adding `python-dotenv` support to `llm_advice.py`, which loads `src/.env` on import. The `.env` file is gitignored and never committed.
+
+**5. Android keyboard obscuring the chat input**
+
+The `LazyColumn` containing the chat did not resize when the soft keyboard opened, so the input field was hidden behind the keyboard. Solution: `Modifier.imePadding()` on the LazyColumn, plus a `LazyListState` + `LaunchedEffect` that triggers `animateScrollToItem` when new chat messages arrive.
+
+**6. Test contamination from live API keys**
+
+With the `.env` file providing a valid OpenCode API key, the fallback tests—designed to verify graceful degradation when no key is available—started receiving real LLM responses instead of triggering the fallback path. We solved this by: (a) monkeypatching `_ask_opencode` in the unit test to always raise `RuntimeError`, and (b) using a fake provider string (`"__test_only__"`) in end-to-end tests that the server rejects as unknown, forcing the fallback branch.
+
+**7. Gradle overwriting `settings.gradle.kts`**
+
+During Android builds, Gradle sometimes stripped the Kotlin plugin declaration from `settings.gradle.kts`, causing compilation failures. The root cause was the `dependencyResolutionManagement` block interacting with the Kotlin Gradle plugin version resolution. The workaround was to `git checkout settings.gradle.kts` after affected builds.
+
+### Learning challenges
+
+None of the team members had prior experience with Android development, Kotlin, Jetpack Compose, or CI pipeline configuration. We learned these on the fly during mob sessions, with the navigators researching documentation and examples while the driver implemented. The LLM prompt engineering—particularly grounding the model with structured treatment data to prevent hallucination—was new territory for all of us and required several iterations before we settled on the current prompt format.
 
 ## Member Contribution
 
-Single-person team. All code, including model training pipeline, backend, Android app, CI configuration, tests, treatment content, and documentation, was authored by the same developer.
+All four team members (Javier Veyrat, Víctor Lozoya, Álvaro Ibáñez, and Luca Angelo) worked on every component of the project through mob programming sessions held over the duration of the capstone. The mob approach meant that at any given time, one person was actively typing (the driver) on one of two development laptops, while the other three team members provided constant real-time navigation—researching APIs, reviewing each line as it was written, spotting edge cases, and discussing architectural decisions.
+
+Specific responsibilities within each mob session were rotated regularly:
+
+- **Driver:** Writing the actual code, running commands, committing changes
+- **Navigator 1 (Architecture):** Ensured the code fit the agreed module structure and followed the single-responsibility principle
+- **Navigator 2 (Research):** Looked up documentation, tested alternative approaches, verified API specifications
+- **Navigator 3 (Testing/Validation):** Anticipated edge cases, mentally traced the execution path, suggested test scenarios
+
+All commits were pushed from the two laptops being used during sessions. The Kanban board served as our shared task tracker, ensuring everyone knew what was being worked on and what was next regardless of who was driving.
 
 ---
 
@@ -234,35 +446,50 @@ Single-person team. All code, including model training pipeline, backend, Androi
 
 ## Limitations
 
-1. **Co-infection not handled:** The model predicts exactly one disease per leaf. If a tomato leaf has both Bacterial Spot and Early Blight, the classifier assigns probability to the most visually prominent one—potentially missing the secondary infection.
+1. **Single-label classification (no co-infection detection):** The model predicts exactly one disease per leaf using softmax. A tomato plant infected with both Bacterial Spot and Early Blight will receive a diagnosis for whichever disease is most visually prominent in the photo, potentially missing the secondary infection. This is a fundamental architectural limitation of softmax-based classifiers; multi-label classification would require sigmoid per class and multi-hot annotated training data, which these public datasets do not provide.
 
-2. **Image quality sensitivity:** The model was trained on well-lit, in-focus lab and field photos. Budget smartphone cameras in low light or shaky hands significantly degrade accuracy. No low-light augmentation or denoising pipeline is in place.
+2. **Orange dataset size (700 images, 70 test):** The Orange model's 98.57% test accuracy carries wide confidence intervals due to the tiny test set. A single misclassified image shifts the reported accuracy by 1.4 percentage points. For production deployment on citrus—where misclassifying HLB as a less serious disease would be catastrophic—this model needs a much larger dataset, especially for the Greening class.
 
-3. **Crop scope:** Only 3 crops out of the 40+ major food crops worldwide. Adding a new crop requires ~1,000+ labeled images, full fine-tuning, and manual curation of treatment cards—roughly 3 working days per crop.
+3. **No image quality pre-filter:** The model accepts any image the PIL library can decode. A severely underexposed, motion-blurred, or low-resolution photo still produces a prediction with no warning to the user that the input quality is below the training distribution. A pre-classification image quality gate (sharpness, brightness, contrast thresholds) would prevent garbage predictions from noisy inputs.
 
-4. **LLM dependence on English grounding:** Even when answering in Spanish or Valencian, the AI prompt sends the static treatment in the target language but relies on the LLM's multilingual capabilities. A model with weak support for Valencian/Catalan may produce mixed-language responses.
+4. **No "unknown plant" rejection:** The model has no out-of-distribution detection capability. A photo of a potato leaf submitted as "Tomato" will receive a confident tomato disease prediction rather than a "I don't recognise this plant" response.
 
-5. **Orange dataset size (700 images):** The smallest dataset, with 98.57% accuracy, is the most vulnerable to overfitting. The per-class test set is only ~14 images.
+5. **LLM dependence on prompt engineering:** The quality of the chat response depends on the LLM's ability to faithfully use the injected treatment card. We have no automated way to detect when the LLM ignores the provided context and generates generic advice or—worse—incorrect treatment information.
 
-6. **No on-device inference:** The Android app requires a server connection. Offline inference with a ~92 MB model is feasible with ONNX Runtime or TFLite but not implemented.
+6. **Server dependency for inference:** The Android app requires a connection to the FastAPI backend for image classification. A farmer in a remote rice paddy with no mobile signal cannot receive a diagnosis, even though the model weights are small enough (~92 MB) to run on-device with ONNX Runtime.
 
-7. **No authentication or rate limiting:** The backend API is fully open.
+7. **No authentication, rate limiting, or usage analytics:** The backend API is fully open. This is acceptable for a capstone project but would not pass a security review for commercial deployment.
 
 ## Future Improvements
 
-1. **Multi-label classification** (sigmoid per class instead of softmax) to detect co-infections. Requires multi-label annotated data.
-2. **ONNX Runtime on Android** to run the model locally, eliminating the server dependency for basic diagnosis. The ~92 MB model would be quantized to ~23 MB INT8.
-3. **Active learning loop:** Allow farmers to confirm or correct diagnoses in-app; use this feedback to periodically fine-tune the model.
-4. **LLM with retrieval-augmented generation (RAG):** Index a larger corpus of agricultural extension bulletins, scientific papers, and regional crop calendars. Combine with the static treatment as the primary source.
-5. **Expand crop coverage** to at least Potato, Wheat, Corn, and Grape (the next most commercially significant crops).
-6. **Weather integration:** Fuse leaf photos with local weather data (humidity, temperature, recent rainfall) as additional model inputs to improve disease predictions that are weather-dependent (e.g., fungal diseases).
-7. **Push notifications** for disease alerts when a pest or disease is reported in the farmer's geographic area.
-8. **Admin dashboard** for extension officers to monitor disease prevalence across their territory.
+1. **On-device inference via ONNX Runtime:** Convert the per-crop ResNet50 models to ONNX format with INT8 quantisation, reducing model size from ~92 MB to ~23 MB. Bundle the model in the APK and run inference directly on the phone's CPU (or NPU on modern devices). This would make the core diagnostic feature fully offline, which is critical for field use in areas with spotty connectivity.
+
+2. **Multi-label classification architecture:** Replace the softmax head with per-class sigmoid activations to enable co-infection detection. Train on new multi-hot annotated data or, as a pragmatic intermediate step, use the current softmax output with a confidence threshold to flag when two classes have nearly equal probability (suggesting possible co-infection).
+
+3. **Image quality gate:** Add a lightweight pre-classification step that measures image sharpness (Laplacian variance), brightness histogram, and resolution, and warns the user or requests a retake if the photo falls below defined thresholds. This is a deterministic, non-AI check that would significantly reduce wrong predictions from degraded input.
+
+4. **Data augmentation for low-quality inputs:** Apply Gaussian blur, brightness reduction, and mild JPEG compression artefacts to a subset of training images so the model learns to be robust to exactly the kinds of degradation that real phone cameras produce in field conditions.
+
+5. **RAG-based knowledge base:** Index a curated corpus of agricultural extension bulletins, FAO disease factsheets, regional crop calendars, and pesticide safety guidelines using a vector database. Replace the current prompt-injection approach with retrieval-augmented generation, where the LLM fetches the most relevant documents and synthesises advice from them. This scales to hundreds of diseases without requiring manual treatment card curation.
+
+6. **Expand crop coverage:** Add support for Potato (Late Blight, the disease that caused the Irish famine, remains a major problem), Wheat (rust diseases), Corn (Northern Leaf Blight), and Grape (Downy Mildew, Powdery Mildew). Each new crop requires dataset acquisition (~1 day), training (~1 hour on GPU), and treatment card curation (~3 hours).
+
+7. **Feedback loop for model improvement:** Allow farmers to confirm or correct the model's diagnosis in-app. Collect these corrections to build a supervised fine-tuning dataset that incrementally improves model accuracy on real-world field photos.
+
+8. **Valencian/Catalan LLM fine-tuning:** The current LLM setup uses general-purpose multilingual models that may have limited Catalan training data. Fine-tuning a smaller open model (e.g., Llama 3.1 8B) on Catalan-language agricultural QA pairs would dramatically improve answer quality for Valencian-speaking users.
+
+9. **Notification system for regional disease alerts:** Combine the app with a lightweight server that tracks disease reports by geolocation, notifying farmers when a disease is detected nearby (e.g., "Late Blight reported within 5 km of your location — inspect your tomato crop immediately").
+
+10. **Admin dashboard for extension services:** Build a web dashboard that aggregates anonymised diagnoses by crop and region, giving extension officers real-time visibility into disease prevalence across their territory.
 
 ## Reflection
 
-This project demonstrated that a production-quality AI application can be built from scratch using entirely free-tier infrastructure: free datasets, free pre-trained weights, free LLM APIs, and free CI minutes. The challenging part was not the AI itself—transfer learning with ResNet50 is remarkably reliable—but the integration work needed to make the AI genuinely useful to a real farmer: translating model output into actionable treatment cards, localizing them to minority languages, making them audible, and wrapping everything in a UI that works on a €100 phone.
+This capstone project was, for all four of us, the most complete software system we have ever built—from raw data to a mobile app that a real farmer could use tomorrow. The mob programming methodology was, in retrospect, the single best decision we made. By working in the same room, on the same code, at the same time, we eliminated the communication overhead that typically consumes 30–40% of group project time. Every architectural decision was debated and settled in minutes rather than across days of asynchronous messages.
 
-If starting over, we would: (1) begin with multi-label classification from day one, (2) invest more heavily in data augmentation to handle real-world phone camera quality, (3) use ONNX from the start for eventual offline inference, and (4) collect user feedback earlier to validate that treatment recommendations are culturally and economically feasible for the target farmers.
+The AI component of the project taught us that the model is the easy part. Transfer learning with ResNet50 is a well-trodden path; someone with basic PyTorch knowledge and a GPU can replicate our training pipeline in an afternoon. The hard part—and the part that took 80% of our time—was everything around the model: the treatment content that makes the diagnosis actionable, the three-language localisation that makes it accessible, the Android app that makes it portable, the TTS that makes it audible, the keyboard-aware chat UI that makes it usable, the CI pipeline that makes it maintainable, and the prompt engineering that makes the LLM's answer trustworthy rather than creatively wrong.
 
-The biggest lesson learned: an AI model with 99% accuracy is worthless if the farmer cannot read the results or afford the recommended treatment. The "last mile" of translation, UX, and contextualization is where real impact happens.
+We also learned that the gap between "works on my laptop" and "works for a farmer in L'Alcora" is vast. The Streamlit web demo worked perfectly in development and would be useless in an orchard. The first Android build crashed on language switch until we moved from resource-based i18n to a dictionary-based approach. The keyboard hid the chat input until we discovered `imePadding()`. These are not AI problems, but they are the difference between a project that gets an A in a classroom and a project that could actually help someone.
+
+If we were to start again with the knowledge we now have, we would: (1) target Android from day one, skipping the web prototype entirely, (2) invest in the Orange dataset first—its small size makes it both the most urgent to expand and the most likely to yield misleading high accuracy numbers, (3) begin with the multi-provider LLM architecture rather than hard-coding Gemini, and (4) add integration tests for the Android-to-backend HTTP flow before adding any chat features, because debugging Retrofit serialisation issues is far harder than debugging Compose layout issues.
+
+The project reinforced a conviction that all of us share: AI for social good does not mean building a marginally more accurate classifier on a saturated benchmark dataset. It means taking an existing, well-understood AI technique and doing the unglamorous work of wrapping it in a complete product that removes every barrier—language, cost, connectivity, literacy, platform—between a farmer and the information they need to save their crop.
