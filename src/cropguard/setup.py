@@ -109,12 +109,19 @@ def copy_rename_folder(src, dst, rename_map):
 
 
 def _flatten_nested_dirs(parent_dir):
-    """Move contents of a single nested subdirectory up to parent_dir.
+    """Move contents of nested subdirectories up to parent_dir.
 
-    Some zip archives create a root folder (e.g. 'Orange Fruit Diseases Dataset/')
-    containing the actual class folders. This flattens that structure.
+    Some zip archives create nested folders (e.g. 'Orange Fruit Diseases Dataset/New folder/')
+    or include a nested zip. This flattens until class folders or multiple items are visible.
     """
-    for _ in range(3):  # max nesting depth
+    for _ in range(5):
+        # Remove nested zip files (e.g. "Orange Fruit Diseases Dataset.zip")
+        for f in os.listdir(parent_dir):
+            fp = os.path.join(parent_dir, f)
+            if os.path.isfile(fp) and f.lower().endswith(".zip"):
+                print(f"  Removing nested zip: {f}")
+                os.unlink(fp)
+
         entries = [e for e in os.listdir(parent_dir)
                    if os.path.isdir(os.path.join(parent_dir, e))]
         if len(entries) == 1:
