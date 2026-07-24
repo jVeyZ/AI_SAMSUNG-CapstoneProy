@@ -13,6 +13,7 @@ from pathlib import Path
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(REPO_ROOT, "data")
+PROJECT_ROOT = os.path.dirname(REPO_ROOT)
 
 
 TOMATO_MAP = {
@@ -43,7 +44,6 @@ RICE_MAP = {
 
 ORANGE_MAP = {
     "Black spot":    "Black_Spot",
-    "black spot":    "Black_Spot",
     "canker":        "Canker",
     "greening":      "Greening_HLB",
     "healthy":       "Healthy_Orange",
@@ -99,7 +99,10 @@ def copy_rename_folder(src, dst, rename_map):
             continue
 
         dst_path = os.path.join(dst, target)
-        if not os.path.exists(dst_path):
+        if os.path.normcase(os.path.abspath(matched)) == os.path.normcase(os.path.abspath(dst_path)):
+            n = count_images(dst_path)
+            print(f"  {os.path.basename(matched):45s} -> {target:30s} (IN PLACE, {n} images)")
+        elif not os.path.exists(dst_path):
             shutil.copytree(matched, dst_path)
             n = count_images(dst_path)
             print(f"  {os.path.basename(matched):45s} -> {target:30s} ({n} images)")
@@ -214,7 +217,7 @@ def setup_orange(force=False):
     os.makedirs(dest, exist_ok=True)
 
     # Step 1: Check if the user already downloaded the zip
-    zip_path = os.path.join(REPO_ROOT, "orange_dataset.zip")
+    zip_path = os.path.join(PROJECT_ROOT, "orange_dataset.zip")
     extracted_dir = None
 
     if os.path.exists(zip_path):
@@ -263,7 +266,7 @@ def setup_orange(force=False):
         print(f"     https://data.mendeley.com/datasets/6szsnpypdd/1")
         print(f"")
         print(f"  2. Click 'Download All' and save as:")
-        print(f"     {os.path.join(REPO_ROOT, 'orange_dataset.zip')}")
+        print(f"     {os.path.join(PROJECT_ROOT, 'orange_dataset.zip')}")
         print(f"")
         print(f"  3. Run this script again: python setup.py --orange")
         print(f"  ----------------------------------------------")
