@@ -9,7 +9,7 @@
 
 **Team CropGuard**
 
-Javier Veyrat, Víctor Lozoya, Álvaro Ibáñez, Luca Angelo
+Javier Veyrat, Víctor Lozoya, Álvaro Ibáñez, Luca Amorotti
 
 ---
 
