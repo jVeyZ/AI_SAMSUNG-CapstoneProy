@@ -75,7 +75,7 @@ app: ## Launch Streamlit web app
 	$(BIN)/streamlit run src/cropguard/app.py
 
 serve: ## Launch FastAPI backend (port 8000)
-	$(BIN)/uvicorn cropguard.server:app --port 8000
+	$(BIN)/uvicorn cropguard.server:app --host 0.0.0.0 --port 8000
 
 # ──────────────────────────────────────────────
 # Testing
@@ -88,28 +88,6 @@ test-unit: ## Run unit tests
 
 test-e2e: ## Run end-to-end tests
 	$(BIN)/python -m pytest tests/e2e -v
-
-# ──────────────────────────────────────────────
-# Linting & formatting
-# ──────────────────────────────────────────────
-
-lint: ## Run linter (ruff)
-	$(BIN)/ruff check src/ tests/
-
-format: ## Auto-format code
-	$(BIN)/ruff format src/ tests/
-
-# ──────────────────────────────────────────────
-# Android
-# ──────────────────────────────────────────────
-
-android-test: ## Run Android unit tests
-	bash ./gradlew testDebugUnitTest
-
-android-apk: ## Build debug APK
-	bash ./gradlew assembleDebug
-
-android: android-test android-apk ## Run Android tests + build APK
 
 # ──────────────────────────────────────────────
 # Cleanup

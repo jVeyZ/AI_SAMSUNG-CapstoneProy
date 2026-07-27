@@ -13,7 +13,7 @@ import os, json
 from pathlib import Path
 
 # Load .env from project src/ directory (one level up from cropguard package)
-_env_path = Path(__file__).resolve().parent.parent / ".env"
+_env_path = Path(__file__).resolve().parents[2] / ".env"
 try:
     from dotenv import load_dotenv
     load_dotenv(_env_path)
